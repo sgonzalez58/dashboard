@@ -36,6 +36,32 @@ class ArticleController extends AbstractController
         return new Response('Saved new article with id '.$article->getId());
     }
 
+    #[Route('/article/all', name: 'article_showAll')]
+    public function showAll(ManagerRegistry $doctrine): Response
+    {
+        $repository = $doctrine->getRepository(Article::class);
+
+        $articles = $repository -> findAll();
+
+        if (!$repository -> findAll()) {
+            throw $this->createNotFoundException(
+                'No article found.'
+            );
+        }
+
+        $response = 'Les articles sont :';
+
+        foreach($articles as $article){
+            $response = $response.$article->getNom().'<br>';
+        }
+
+        return new Response($response);
+
+        // or render a template
+        // in the template, print things with {{ article.name }}
+        // return $this->render('article/show.html.twig', ['article' => $article]);
+    }
+
     #[Route('/article/{id}', name: 'article_show')]
     public function show(ManagerRegistry $doctrine, int $id): Response
     {
