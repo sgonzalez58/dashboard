@@ -1,0 +1,16 @@
+{# templates/accueil/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{# ... #}
+
+{% block body %}
+    <body>
+        <h1>{{ page_title }}</h1>
+
+        {% if not user is same as(null) %}
+            Hello {{ user.getUserIdentifier() }}!
+        {% endif %}
+
+        {# ... #}
+    </body>
+{% endblock %}
