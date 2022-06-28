@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\Categorie;
 use App\Form\AddCategorieFormType;
+use App\Form\DeleteCategorieFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -69,6 +70,42 @@ class CategorieController extends AbstractController
         ]);
     }
 
+    #[Route('/categorie/delete/{id}', name: 'categorie_delete')]
+    public function delete(Request $request, ManagerRegistry $doctrine, int $id): Response
+    {
+        
+        $entityManager = $doctrine->getManager();
+        $categorie = $doctrine->getRepository(Categorie::class)->find($id);
+        $form = $this->createForm(DeleteCategorieFormType::class, $categorie);
+        $form->handleRequest($request);
+
+        if (!$categorie) {
+            throw $this->createNotFoundException(
+                'No article found for id '.$id
+            );
+        }
+
+        if ($form->isSubmitted() && $form->isValid()) {
+        
+            // tell Doctrine you want to (eventually) save the article (no queries yet)
+            $entityManager->remove($categorie);
+
+            // actually executes the queries (i.e. the INSERT query)
+            $entityManager->flush();
+
+            return new Response('Categorie n°'.$id().', '.$categorie->getNom().' has been deleted.');
+        }
+
+        //return new Response('Check out this great categorie: '.$categorie->getNom());
+
+        // or render a template
+        // in the template, print things with {{ article.name }}
+        return $this->render('categorie/delete.html.twig', [
+            'deleteCategorieForm' => $form->createView(),
+            'my_title' => 'Delete categorie n°'.$id.', '.$categorie->getNom().' ?',
+        ]);
+    }
+
     #[Route('/categorie/{id}', name: 'categorie_update')]
     public function update(Request $request, ManagerRegistry $doctrine, int $id): Response
     {
@@ -85,11 +122,10 @@ class CategorieController extends AbstractController
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $nouveau_nom = $form->get('nom')->getData();
-            $categorie->setNom($nouveau_nom);
-        
+            $categorie->setNom($form->get('nom')->getData());
+            
             // tell Doctrine you want to (eventually) save the article (no queries yet)
-            $entityManager->persist($categorie);
+            $entityManager-persist($categorie);
 
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();

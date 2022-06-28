@@ -18,6 +18,10 @@ body {
     padding : 15px 25px 10px;
 }
 
+.pad-5-only-right{
+    padding : 0 0 0 5%;
+}
+
 .marg-0-10{
     margin : 0 10%;
 }
@@ -26,8 +30,12 @@ body {
     margin : 0;
 }
 
-.center{
+.justify-center{
     justify-content: center;
+}
+
+.center{
+    text-align: center;
 }
 
 .space-between{
@@ -44,6 +52,10 @@ body {
 
 .radius-25-top{
     border-radius: 25px 25px 0 0;
+}
+
+.radius-25-right{
+    border-radius: 0 25px 25px 0;
 }
 
 .relative{
@@ -70,6 +82,14 @@ body {
 
 .end{
     justify-content: end;
+}
+
+.of-hidden{
+    overflow: hidden;
+}
+
+.full-width{
+    width: 100%;
 }
 
 .align-center{

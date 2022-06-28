@@ -12,17 +12,16 @@ use Symfony\Component\Validator\Constraints\IsTrue;
 use Symfony\Component\Validator\Constraints\Length;
 use Symfony\Component\Validator\Constraints\NotBlank;
 
-class AddCategorieFormType extends AbstractType
+class DeleteCategorieFormType extends AbstractType
 {
     public function buildForm(FormBuilderInterface $builder, array $options): void
     {
         $builder
-            ->add('nom')
             ->add('confirmation', CheckboxType::class, [
                 'mapped' => false,
                 'constraints' => [
                     new IsTrue([
-                        'message' => 'Veuillez confirmer.',
+                        'message' => 'Veuillez confirmer votre choix.',
                     ]),
                 ],
             ])
