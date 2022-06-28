@@ -19,7 +19,9 @@
                 {% endif %}
                     <a href={{'/article/' ~ article.getId()}}>Plus d'infos</a>
                     <p>{{article.getNom()}}</p>
-                    <p>{{article.getDateAchat()|date('Y-m-d')}}</p>
+                    {% if not article.getDateAchat() is same as(null)%}
+                        <p>{{article.getDateAchat()|date('Y-m-d')}}</p>
+                    {% endif %}
                     <a>Supprimer</a>
                 </div>
             {% endfor %}
