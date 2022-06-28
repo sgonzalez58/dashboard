@@ -57,6 +57,7 @@ class ArticleController extends AbstractController
             'articles' => $articles,
             'page_title' => 'Articles',
             'user' => $this->getUser(),
+            'type' => 'article',
         ]);
     }
 
