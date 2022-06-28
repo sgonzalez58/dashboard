@@ -8,6 +8,10 @@
         <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
 
+    <div class='flex end'>
+            <a href={{'/'}}>retour au menu</a>
+    </div>
+
     <form action="{{ path('login') }}" method="post">
         <label for="username">Email:</label>
         <input type="text" id="username" name="_username" value="{{ last_username }}"/>

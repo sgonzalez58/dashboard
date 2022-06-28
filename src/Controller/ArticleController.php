@@ -49,17 +49,15 @@ class ArticleController extends AbstractController
             );
         }
 
-        $response = 'Les articles sont :';
-
-        foreach($articles as $article){
-            $response = $response.$article->getNom().'<br>';
-        }
-
-        return new Response($response);
+        //return new Response($response);
 
         // or render a template
         // in the template, print things with {{ article.name }}
-        // return $this->render('article/show.html.twig', ['article' => $article]);
+        return $this->render('liste/index.html.twig', [
+            'articles' => $articles,
+            'page_title' => 'Articles',
+            'user' => $this->getUser(),
+        ]);
     }
 
     #[Route('/article/{id}', name: 'article_show')]

@@ -7,28 +7,32 @@
     <body>
         <h1>{{ page_title }}</h1>
 
-        
-        {% if not user is same as(null) %}
-            <div class='flex space-between align-center'>
-                Hello {{ user.getUserIdentifier() }}!
-                <a href="{{ path('app_logout') }}">
-                    <button>Se déconnecter</button>
-                </a>
-            </div>
-        {% endif %}
-        
-        {% if user is same as(null) %}
-            <div class='flex end'>
-                <a href="{{ path('login') }}">
-                    <button>Se connecter</button>
-                </a>
-                <a href="{{ path('app_register') }}">
-                    <button>Créer un compte</button>
-                </a>
-            </div>
-        {% endif %}
+        <div class='flex pad-0-10 space-between align-center'>
+            <form>
+                <input type='text' name='search'>
+                <input type='submit' value='search'>
+            </form>
+            {% if not user is same as(null) %}
+                    Hello {{ user.getUserIdentifier() }}!
+                    <a href="{{ path('app_logout') }}">
+                        <button>Se déconnecter</button>
+                    </a>
+            {% endif %}
+            
+            {% if user is same as(null) %}
+                <div class='flex'>
+                    <a href="{{ path('login') }}">
+                        <button>Se connecter</button>
+                    </a>
+                    <a href="{{ path('app_register') }}">
+                        <button>Créer un compte</button>
+                    </a>
+                </div>
+            {% endif %}
+            
+        </div>
 
-        <div class='flex center'>
+        <div class='flex pad-0-10 center'>
             <a href="{{ path('article_showAll') }}">
                 <button>Liste articles</button>
             </a>

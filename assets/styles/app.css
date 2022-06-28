@@ -4,7 +4,18 @@ body {
 
 .flex{
     display: flex;
+}
+
+.column{
+    flex-direction: column;
+}
+
+.pad-0-10{
     padding : 0 10%;
+}
+
+.marg-0-10{
+    margin : 0 10%;
 }
 
 .center{
@@ -13,6 +24,26 @@ body {
 
 .space-between{
     justify-content: space-between;
+}
+
+.border{
+    border:1px solid black;
+}
+
+.radius-25{
+    border-radius: 25px;
+}
+
+.bg-color-blue{
+    background-color: lightblue;
+}
+
+.bg-color-grey{
+    background-color: lightgray;
+}
+
+.of-hidden{
+    overflow: hidden;
 }
 
 .end{

@@ -3,10 +3,14 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    <h1>Register</h1>
+    <div class='flex space-between align-center'>
+        <h1>Register</h1>
+        <a href={{'/'}}>retour au menu</a>
+    </div>
 
     {{ form_start(registrationForm) }}
         {{ form_row(registrationForm.email) }}
+        {{ form_row(registrationForm.username) }}
         {{ form_row(registrationForm.plainPassword, {
             label: 'Password'
         }) }}

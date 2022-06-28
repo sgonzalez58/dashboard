@@ -1,0 +1,28 @@
+{# templates/accueil/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{# ... #}
+
+{% block body %}
+    <body>
+        <div class='flex space-between align-center'>
+            <h1>{{ page_title }}</h1>
+            <a href={{'/'}}>retour au menu</a>
+        </div>
+
+        <div class='flex column marg-0-10 border radius-25 of-hidden'>
+            {% for article in articles %}
+                {% if article.getId() is divisible by(2) %}
+                    <div class='flex space-between align-center pad-0-10 bg-color-blue'>
+                {% else %}
+                    <div class='flex space-between align-center pad-0-10 bg-color-grey'>
+                {% endif %}
+                    <a href={{'/article/' ~ article.getId()}}>Plus d'infos</a>
+                    <p>{{article.getNom()}}</p>
+                    <p>{{article.getDateAchat()|date('Y-m-d')}}</p>
+                    <a>Supprimer</a>
+                </div>
+            {% endfor %}
+        </div>
+    </body>
+{% endblock %}
