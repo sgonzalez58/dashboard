@@ -16,11 +16,13 @@
             </a>
         </div>
         <div class='flex column marg-0-10 border radius-25 of-hidden relative'>
+            {% set color = 1 %}
             {% for article in articles %}
-            
-                {% if article.getId() is divisible by(2) %}
+                {% if color %}
+                    {% set color = 0 %}
                     <div class='flex bg-color-blue'>
                 {% else %}
+                    {% set color = 1 %}
                     <div class='flex bg-color-grey'>
                 {% endif %}
                     <p class='pad-5-only-right'>{{ article.getId() }}</p>
@@ -33,6 +35,9 @@
                         <p>{{article.getNom()}}</p>
                         {% if article.getDateAchat() is defined %}
                             <p>{{article.getDateAchat()|date('Y-m-d')}}</p>
+                        {% endif %}
+                        {% if article.getType() is defined %}
+                            <p>{{article.getType()}}</p>
                         {% endif %}
                         <a href={{'/' ~ type ~ '/delete/' ~ article.getId()}}>Supprimer</a>
                     </div>

@@ -7,50 +7,50 @@ use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\Routing\Annotation\Route;
 
 
-use App\Entity\Categorie;
-use App\Form\AddCategorieFormType;
-use App\Form\DeleteCategorieFormType;
+use App\Entity\LieuAchat;
+use App\Form\AddLieuAchatFormType;
+use App\Form\DeleteLieuAchatFormType;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Doctrine\Persistence\ManagerRegistry;
 
-class CategorieController extends AbstractController
+class LieuAchatController extends AbstractController
 {
-    #[Route('/categorie/add', name: 'create_categorie')]
-    public function createcategorie(Request $request, ManagerRegistry $doctrine): Response
+    #[Route('/lieuAchat/add', name: 'create_lieuAchat')]
+    public function createLieuAchat(Request $request, ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
 
-        $categorie = new Categorie();
-        $form = $this->createForm(AddCategorieFormType::class, $categorie);
+        $lieuAchat = new LieuAchat();
+        $form = $this->createForm(AddLieuAchatFormType::class, $lieuAchat);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
             $nouveau_nom = $form->get('nom')->getData();
-            $categorie->setNom($nouveau_nom);
+            $lieuAchat->setNom($nouveau_nom);
         
             // tell Doctrine you want to (eventually) save the article (no queries yet)
-            $entityManager->persist($categorie);
+            $entityManager->persist($lieuAchat);
 
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();
 
-            return new Response('Saved new categorie with id '.$categorie->getId());
+            return new Response('Saved new lieuAchat with id '.$lieuAchat->getId());
         }
 
-        return $this->render('categorie/add.html.twig', [
+        return $this->render('lieuAchat/add.html.twig', [
             'registrationForm' => $form->createView(),
-            'my_title' => 'Add categorie'
+            'my_title' => 'Add lieuAchat'
         ]);
     }
 
-    #[Route('/categorie/all', name: 'categorie_showAll')]
+    #[Route('/lieuAchat/all', name: 'lieuAchat_showAll')]
     public function showAll(ManagerRegistry $doctrine): Response
     {
-        $repository = $doctrine->getRepository(Categorie::class);
+        $repository = $doctrine->getRepository(LieuAchat::class);
 
-        $categories = $repository -> findAll();
+        $lieuxAchats = $repository -> findAll();
 
         if (!$repository -> findAll()) {
             throw $this->createNotFoundException(
@@ -63,23 +63,23 @@ class CategorieController extends AbstractController
         // or render a template
         // in the template, print things with {{ article.name }}
         return $this->render('liste/index.html.twig', [
-            'articles' => $categories,
-            'page_title' => 'Categories',
+            'articles' => $lieuxAchats,
+            'page_title' => 'LieuxAchats',
             'user' => $this->getUser(),
-            'type' => 'categorie',
+            'type' => 'lieuAchat',
         ]);
     }
 
-    #[Route('/categorie/delete/{id}', name: 'categorie_delete')]
+    #[Route('/lieuAchat/delete/{id}', name: 'lieuAchat_delete')]
     public function delete(Request $request, ManagerRegistry $doctrine, int $id): Response
     {
         
         $entityManager = $doctrine->getManager();
-        $categorie = $doctrine->getRepository(Categorie::class)->find($id);
-        $form = $this->createForm(DeleteCategorieFormType::class, $categorie);
+        $lieuAchat = $doctrine->getRepository(LieuAchat::class)->find($id);
+        $form = $this->createForm(DeleteLieuAchatFormType::class, $lieuAchat);
         $form->handleRequest($request);
 
-        if (!$categorie) {
+        if (!$lieuAchat) {
             throw $this->createNotFoundException(
                 'No article found for id '.$id
             );
@@ -88,58 +88,60 @@ class CategorieController extends AbstractController
         if ($form->isSubmitted() && $form->isValid()) {
         
             // tell Doctrine you want to (eventually) save the article (no queries yet)
-            $entityManager->remove($categorie);
+            $entityManager->remove($lieuAchat);
 
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();
 
-            return new Response('Categorie n°'.$id.', '.$categorie->getNom().' has been deleted.');
+            return new Response('LieuAchat n°'.$id.', '.$lieuAchat->getNom().' has been deleted.');
         }
 
-        //return new Response('Check out this great categorie: '.$categorie->getNom());
+        //return new Response('Check out this great lieuAchat: '.$lieuAchat->getNom());
 
         // or render a template
         // in the template, print things with {{ article.name }}
-        return $this->render('categorie/delete.html.twig', [
-            'deleteCategorieForm' => $form->createView(),
-            'my_title' => 'Delete categorie n°'.$id.', '.$categorie->getNom().' ?',
+        return $this->render('lieuAchat/delete.html.twig', [
+            'deleteLieuAchatForm' => $form->createView(),
+            'my_title' => 'Delete lieuAchat n°'.$id.', '.$lieuAchat->getNom().' ?',
         ]);
     }
 
-    #[Route('/categorie/{id}', name: 'categorie_update')]
+    #[Route('/lieuAchat/{id}', name: 'lieuAchat_update')]
     public function update(Request $request, ManagerRegistry $doctrine, int $id): Response
     {
         
         $entityManager = $doctrine->getManager();
-        $categorie = $doctrine->getRepository(Categorie::class)->find($id);
-        $form = $this->createForm(AddCategorieFormType::class, $categorie);
+        $lieuAchat = $doctrine->getRepository(LieuAchat::class)->find($id);
+        $form = $this->createForm(AddLieuAchatFormType::class, $lieuAchat);
         $form->handleRequest($request);
 
-        if (!$categorie) {
+        if (!$lieuAchat) {
             throw $this->createNotFoundException(
                 'No article found for id '.$id
             );
         }
 
         if ($form->isSubmitted() && $form->isValid()) {
-            $categorie->setNom($form->get('nom')->getData());
+            $lieuAchat->setNom($form->get('nom')->getData());
+            $lieuAchat->setType($form->get('type')->getData());
+            $lieuAchat->setAdresse($form->get('adresse')->getData());
             
             // tell Doctrine you want to (eventually) save the article (no queries yet)
-            $entityManager->persist($categorie);
+            $entityManager->persist($lieuAchat);
 
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();
 
-            return new Response('Saved categorie '.$categorie->getId().' with new name : '.$categorie->getNom());
+            return new Response('Saved lieuAchat '.$lieuAchat->getId().'.');
         }
 
-        //return new Response('Check out this great categorie: '.$categorie->getNom());
+        //return new Response('Check out this great lieuAchat: '.$lieuAchat->getNom());
 
         // or render a template
         // in the template, print things with {{ article.name }}
-        return $this->render('categorie/add.html.twig', [
+        return $this->render('lieuAchat/add.html.twig', [
             'registrationForm' => $form->createView(),
-            'my_title' => 'Update categorie',
+            'my_title' => 'Update lieuAchat',
         ]);
     }
 }

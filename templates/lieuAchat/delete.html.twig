@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ my_title }}{% endblock %}
+
+{% block body %}
+    <div class='flex space-between align-center'>
+        <h1>{{ my_title }}</h1>
+        <a href={{'/'}}>retour au menu</a>
+    </div>
+
+    {{ form_start(deleteLieuAchatForm) }}
+        {{ form_row(deleteLieuAchatForm.confirmation) }}
+
+        <button type="submit" class="btn">Delete</button>
+    {{ form_end(deleteLieuAchatForm) }}
+{% endblock %}
