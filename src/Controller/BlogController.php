@@ -12,7 +12,7 @@ class BlogController extends AbstractController
     public function index(): Response
     {
         return $this->render('accueil/index.html.twig', [
-            'page_title' => 'Accueil',
+            'page_title' => 'Bienvenu sur votre dashboard d\'achats !',
             'user' => $this->getUser(),
         ]);
     }

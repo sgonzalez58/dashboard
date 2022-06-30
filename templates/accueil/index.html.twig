@@ -5,43 +5,47 @@
 
 {% block body %}
     <body>
-        <h1>{{ page_title }}</h1>
+        <div class='container'>
+            <div class='min-vh-100 d-flex flex-column justify-content-evenly '>
+                <div class='d-flex justify-content-center'>
+                    <h1 class='text-center'>{{ page_title }}</h1>
+                </div>
+                <div class='row justify-content-center'>
+                    {% if not user is same as(null) %}                    
+                            <h2 class='col-11 text-center col-lg-4 gy-3'>Bonjour {{ user.getUserIdentifier() }}!</h2>
+                            <a class ='col-lg-4 row justify-content-end gy-3 order-lg-last' href="{{ path('app_logout') }}">
+                                <button type="button" class='col col-lg-6 btn btn-danger'>Se déconnecter</button type="button" class='btn'>
+                            </a>
+                    {% else %}
+                        <div class='col-10 offset-md-0 col-lg-8 row justify-content-center justify-content-lg-start gy-3 gy-md-0' style='min-width:140px;'>
+                            <a class='col-sm-6 col-lg-3 row me-sm-1 gy-3 gy-md-0'href="{{ path('login') }}">
+                                <button type="button" class='btn btn-primary'>Se connecter</button type="button" class='btn'>
+                            </a>
+                            <a class ='col-sm-6 col-lg-4 row gy-3 gy-md-0'href="{{ path('app_register') }}">
+                                <button type="button" class='btn btn-secondary'>Créer un compte</button type="button" class='btn'>
+                            </a>
+                        </div>
+                    {% endif %}
+                    <form class='col-10 col-lg-4 gy-3 row justify-content-center'>
+                        <input class='col-8 col-md-7' type='text' name='search'>
+                        <input class='col-2 col-md-4' style='min-width:72px;'type='submit' value='search'>
+                    </form>
+                    
+                </div>
 
-        <div class='flex pad-0-10 space-between align-center'>
-            <form>
-                <input type='text' name='search'>
-                <input type='submit' value='search'>
-            </form>
-            {% if not user is same as(null) %}
-                    Hello {{ user.getUserIdentifier() }}!
-                    <a href="{{ path('app_logout') }}">
-                        <button>Se déconnecter</button>
+                <div class='row justify-content-evenly'>
+                    <a class='col row justify-content-center gy-3' href="{{ path('article_showAll') }}">
+                        <button type="button" class='col-10 btn btn-primary'>Liste articles</button type="button" class='btn'>
                     </a>
-            {% endif %}
-            
-            {% if user is same as(null) %}
-                <div class='flex'>
-                    <a href="{{ path('login') }}">
-                        <button>Se connecter</button>
+                    <a class='col row justify-content-center gy-3' href="{{ path('categorie_showAll') }}">
+                        <button type="button" class='col-10 btn btn-primary'>Liste catégories</button type="button" class='btn'>
                     </a>
-                    <a href="{{ path('app_register') }}">
-                        <button>Créer un compte</button>
+                    <a class='col row justify-content-center gy-3' href="{{ path('lieuAchat_showAll') }}">
+                        <button type="button" class='col-10 btn btn-primary'>Liste fournisseurs</button type="button" class='btn'>
                     </a>
                 </div>
-            {% endif %}
-            
-        </div>
-
-        <div class='flex pad-0-10 justify-center'>
-            <a href="{{ path('article_showAll') }}">
-                <button>Liste articles</button>
-            </a>
-            <a href="{{ path('categorie_showAll') }}">
-                <button>Liste catégories</button>
-            </a>
-            <a href="{{ path('lieuAchat_showAll') }}">
-                <button>Liste fournisseurs</button>
-            </a>
+                <p class='align-self-center'>@control de produit</p>
+            </div>
         </div>
     </body>
 {% endblock %}
