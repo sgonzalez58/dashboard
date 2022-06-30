@@ -8,20 +8,27 @@
         <div>{{ error.messageKey|trans(error.messageData, 'security') }}</div>
     {% endif %}
 
-    <div class='flex end'>
-            <a href={{'/'}}>retour au menu</a>
+    <div class='container min-vh-100'>
+        <div class='d-flex flex-wrap-reverse justify-content-between my-3'>
+                <h1 class='my-3' >Login</h1>
+                <a class='my-3'  href={{'/'}}>
+                    <button type='button' class='btn btn-primary'>retour au menu</button>
+                </a>
+        </div>
+
+        <form class='row g-0 justify-content-center position-absolute top-50 start-50 translate-middle min-vw-100' action="{{ path('login') }}" method="post">
+            <div class='row col-11 justify-content-center gy-3'>
+                <label class='col-sm-2 col-lg-1 text-center text-sm-start' for="username">Email:</label>
+                <input class='col-sm-10 col-md-8 col-lg-6 col-xl-4' type="text" id="username" name="_username" value="{{ last_username }}"/>
+            </div>
+            <div class='row col-11 justify-content-center gy-3'>
+                <label class='col-sm-2 col-lg-1 text-center text-sm-start' for="password">Password:</label>
+                <input class='col-sm-10 col-md-8 col-lg-6 col-xl-4' type="password" id="password" name="_password"/>
+            </div>
+            {# If you want to control the URL the user is redirected to on success #}
+            <input type="hidden" name="_target_path" value="/"/>
+
+            <button class='col-6 col-sm-4 col-md-3 col-lg-2 gy-5' type="submit">login</button>
+        </form>
     </div>
-
-    <form action="{{ path('login') }}" method="post">
-        <label for="username">Email:</label>
-        <input type="text" id="username" name="_username" value="{{ last_username }}"/>
-
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="_password"/>
-
-        {# If you want to control the URL the user is redirected to on success #}
-        <input type="hidden" name="_target_path" value="/"/>
-
-        <button type="submit">login</button>
-    </form>
 {% endblock %}
