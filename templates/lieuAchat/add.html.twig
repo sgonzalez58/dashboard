@@ -3,17 +3,25 @@
 {% block title %}{{ my_title }}{% endblock %}
 
 {% block body %}
-    <div class='flex space-between align-center'>
-        <h1>{{ my_title }}</h1>
-        <a href={{'/'}}>retour au menu</a>
+    <div class='container min-vh-100'>
+        <div class='d-flex flex-wrap-reverse justify-content-between my-3'>
+                <h1 class='my-3' >{{ my_title }}</h1>
+                <a class='my-3'  href={{'/lieuAchat'}}>
+                    <button type='button' class='btn btn-danger'>annuler</button>
+                </a>
+                <a class='my-3'  href={{'/'}}>
+                    <button type='button' class='btn btn-primary'>retour au menu</button>
+                </a>
+        </div>
+
+        {{ form_start(registrationForm) }}
+            {{ form_row(registrationForm.nom) }}
+            {{ form_row(registrationForm.type) }}
+            {{ form_row(registrationForm.adresse) }}
+            {{ form_row(registrationForm.confirmation) }}
+
+            <button type="submit" class="btn btn-primary">Register</button>
+        {{ form_end(registrationForm) }}
+
     </div>
-
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.nom) }}
-        {{ form_row(registrationForm.type) }}
-        {{ form_row(registrationForm.adresse) }}
-        {{ form_row(registrationForm.confirmation) }}
-
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
 {% endblock %}

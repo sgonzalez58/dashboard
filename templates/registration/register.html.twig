@@ -3,19 +3,24 @@
 {% block title %}Register{% endblock %}
 
 {% block body %}
-    <div class='flex space-between align-center'>
-        <h1>Register</h1>
-        <a href={{'/'}}>retour au menu</a>
+    <div class='container min-vh-100'>
+        <div class='d-flex flex-wrap-reverse justify-content-between my-3'>
+                <h1 class='my-3' >Register</h1>
+                <a class='my-3'  href={{'/'}}>
+                    <button type='button' class='btn btn-primary'>retour au menu</button>
+                </a>
+        </div>
+
+
+        {{ form_start(registrationForm) }}
+            {{ form_row(registrationForm.email) }}
+            {{ form_row(registrationForm.username) }}
+            {{ form_row(registrationForm.plainPassword, {
+                label: 'Password'
+            }) }}
+            {{ form_row(registrationForm.agreeTerms) }}
+
+            <button class='btn btn-primary' type="submit">Register</button>
+        {{ form_end(registrationForm) }}
     </div>
-
-    {{ form_start(registrationForm) }}
-        {{ form_row(registrationForm.email) }}
-        {{ form_row(registrationForm.username) }}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Password'
-        }) }}
-        {{ form_row(registrationForm.agreeTerms) }}
-
-        <button type="submit" class="btn">Register</button>
-    {{ form_end(registrationForm) }}
 {% endblock %}

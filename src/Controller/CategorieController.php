@@ -36,7 +36,7 @@ class CategorieController extends AbstractController
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();
 
-            return new Response('Saved new categorie with id '.$categorie->getId());
+            return $this->redirectToRoute('categorie_showAll');
         }
 
         return $this->render('categorie/add.html.twig', [
@@ -45,30 +45,6 @@ class CategorieController extends AbstractController
         ]);
     }
 
-    #[Route('/categorie/all', name: 'categorie_showAll')]
-    public function showAll(ManagerRegistry $doctrine): Response
-    {
-        $repository = $doctrine->getRepository(Categorie::class);
-
-        $categories = $repository -> findAll();
-
-        if (!$repository -> findAll()) {
-            throw $this->createNotFoundException(
-                'No article found.'
-            );
-        }
-
-        //return new Response($response);
-
-        // or render a template
-        // in the template, print things with {{ article.name }}
-        return $this->render('liste/index.html.twig', [
-            'articles' => $categories,
-            'page_title' => 'Categories',
-            'user' => $this->getUser(),
-            'type' => 'categorie',
-        ]);
-    }
 
     #[Route('/categorie/delete/{id}', name: 'categorie_delete')]
     public function delete(Request $request, ManagerRegistry $doctrine, int $id): Response
@@ -93,7 +69,7 @@ class CategorieController extends AbstractController
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();
 
-            return new Response('Categorie n°'.$id.', '.$categorie->getNom().' has been deleted.');
+            return $this->redirectToRoute('categorie_showAll');
         }
 
         //return new Response('Check out this great categorie: '.$categorie->getNom());
@@ -130,7 +106,7 @@ class CategorieController extends AbstractController
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();
 
-            return new Response('Saved categorie '.$categorie->getId().' with new name : '.$categorie->getNom());
+            return $this->redirectToRoute('categorie_showAll');
         }
 
         //return new Response('Check out this great categorie: '.$categorie->getNom());
@@ -140,6 +116,31 @@ class CategorieController extends AbstractController
         return $this->render('categorie/add.html.twig', [
             'registrationForm' => $form->createView(),
             'my_title' => 'Update categorie',
+        ]);
+    }
+
+    #[Route('/categorie', name: 'categorie_showAll')]
+    public function showAll(ManagerRegistry $doctrine): Response
+    {
+        $repository = $doctrine->getRepository(Categorie::class);
+
+        $categories = $repository -> findAll();
+
+        if (!$repository -> findAll()) {
+            throw $this->createNotFoundException(
+                'No article found.'
+            );
+        }
+
+        //return new Response($response);
+
+        // or render a template
+        // in the template, print things with {{ article.name }}
+        return $this->render('liste/index.html.twig', [
+            'articles' => $categories,
+            'page_title' => 'Categories',
+            'user' => $this->getUser(),
+            'type' => 'categorie',
         ]);
     }
 }

@@ -36,37 +36,12 @@ class LieuAchatController extends AbstractController
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();
 
-            return new Response('Saved new lieuAchat with id '.$lieuAchat->getId());
+            return $this->redirectToRoute('lieuAchat_showAll');
         }
 
         return $this->render('lieuAchat/add.html.twig', [
             'registrationForm' => $form->createView(),
             'my_title' => 'Add lieuAchat'
-        ]);
-    }
-
-    #[Route('/lieuAchat/all', name: 'lieuAchat_showAll')]
-    public function showAll(ManagerRegistry $doctrine): Response
-    {
-        $repository = $doctrine->getRepository(LieuAchat::class);
-
-        $lieuxAchats = $repository -> findAll();
-
-        if (!$repository -> findAll()) {
-            throw $this->createNotFoundException(
-                'No article found.'
-            );
-        }
-
-        //return new Response($response);
-
-        // or render a template
-        // in the template, print things with {{ article.name }}
-        return $this->render('liste/index.html.twig', [
-            'articles' => $lieuxAchats,
-            'page_title' => 'LieuxAchats',
-            'user' => $this->getUser(),
-            'type' => 'lieuAchat',
         ]);
     }
 
@@ -93,7 +68,7 @@ class LieuAchatController extends AbstractController
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();
 
-            return new Response('LieuAchat n°'.$id.', '.$lieuAchat->getNom().' has been deleted.');
+            return $this->redirectToRoute('lieuAchat_showAll');
         }
 
         //return new Response('Check out this great lieuAchat: '.$lieuAchat->getNom());
@@ -132,7 +107,7 @@ class LieuAchatController extends AbstractController
             // actually executes the queries (i.e. the INSERT query)
             $entityManager->flush();
 
-            return new Response('Saved lieuAchat '.$lieuAchat->getId().'.');
+            return $this->redirectToRoute('lieuAchat_showAll');
         }
 
         //return new Response('Check out this great lieuAchat: '.$lieuAchat->getNom());
@@ -142,6 +117,31 @@ class LieuAchatController extends AbstractController
         return $this->render('lieuAchat/add.html.twig', [
             'registrationForm' => $form->createView(),
             'my_title' => 'Update lieuAchat',
+        ]);
+    }
+
+    #[Route('/lieuAchat', name: 'lieuAchat_showAll')]
+    public function showAll(ManagerRegistry $doctrine): Response
+    {
+        $repository = $doctrine->getRepository(LieuAchat::class);
+
+        $lieuxAchats = $repository -> findAll();
+
+        if (!$repository -> findAll()) {
+            throw $this->createNotFoundException(
+                'No article found.'
+            );
+        }
+
+        //return new Response($response);
+
+        // or render a template
+        // in the template, print things with {{ article.name }}
+        return $this->render('liste/index.html.twig', [
+            'articles' => $lieuxAchats,
+            'page_title' => 'LieuxAchats',
+            'user' => $this->getUser(),
+            'type' => 'lieuAchat',
         ]);
     }
 }

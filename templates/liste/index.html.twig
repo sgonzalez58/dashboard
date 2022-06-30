@@ -4,45 +4,59 @@
 {# ... #}
 
 {% block body %}
-    <body>
-        <div class='flex space-between align-center'>
-            <h1>{{ page_title }}</h1>
-            <a href={{'/'}}>retour au menu</a>
+    <div class='container min-vh-100'>
+        <div class='d-flex flex-wrap-reverse justify-content-between my-3'>
+                <h1 class='my-3'>{{ page_title }}</h1>
+                <a class='my-3' href={{'/'}}>
+                    <button type='button' class='btn btn-primary'>retour au menu</button>
+                </a>
         </div>
 
-        <div class='flex justify-center '>
-            <a href={{'/' ~ type ~ '/add'}}>
-                <button class='marg-0 pad-25-low-bottom radius-25-top border bg-color-red'>ajouter</button>
+        <div class='row justify-content-center'>
+            <a class='row col-sm-4 col-md-3 col-lg-2 justify-content-center' href={{'/' ~ type ~ '/add'}}>
+                <button type='button' class='btn btn-danger'>ajouter</button>
             </a>
         </div>
-        <div class='flex column marg-0-10 border radius-25 of-hidden relative'>
+        <div class='row border rounded g-0'>
             {% set color = 1 %}
+            <div class='row col-12 g-0 col bg-primary justify-content-around bg-opacity-50 text-center'>
+                <p class='col-2 col-md-1'>Id</p>
+                <p class='col-sm-3'>Nom</p>
+                {% set article = articles[0] %}
+                {% if article.getDateAchat() is defined %}
+                        <p class='col-sm-3'>Date d'achat</p>
+                {% endif %}
+                {% if article.getType() is defined %}
+                    <p class='col-sm-3'>Sur place/A distance</p>
+                {% endif %}
+                <div class='row col-md-5 g-0'></div>
+            </div>
             {% for article in articles %}
                 {% if color %}
                     {% set color = 0 %}
-                    <div class='flex bg-color-blue'>
+                    <div class='row col-12 g-0 col bg-info justify-content-around bg-opacity-50 text-center'>
                 {% else %}
                     {% set color = 1 %}
-                    <div class='flex bg-color-grey'>
+                    <div class='row col-12 g-0 col bg-light justify-content-around text-center'>
                 {% endif %}
-                    <p class='pad-5-only-right'>{{ article.getId() }}</p>
-                    <div class='flex space-between align-center pad-0-10 full-width'>
+                    <p class='col-2 col-md-1'> {{ article.getId() }}</p>
+                    <p class='col-sm-3'>{{article.getNom()}}</p>
+                    {% if article.getDateAchat() is defined %}
+                        <p class='col-sm-3'>{{article.getDateAchat()|date('Y-m-d')}}</p>
+                    {% endif %}
+                    {% if article.getType() is defined %}
+                        <p class='col-sm-3'>{{article.getType()}}</p>
+                    {% endif %}
+                    <div class='row col-md-5 g-0'>
                         {% if type is same as('categorie') %}
-                            <a href={{'/' ~ type ~ '/' ~ article.getId()}}>Modifier</a>
+                            <a class='col' href={{'/' ~ type ~ '/' ~ article.getId()}}><button type='button' class='btn btn-primary mx-1'>Modifier</button></a>
                         {% else %}
-                            <a href={{'/' ~ type ~ '/' ~ article.getId()}}>Plus d'infos</a>
+                            <a class='col' href={{'/' ~ type ~ '/' ~ article.getId()}}><button type='button' class='btn btn-primary mx-1'>Plus d'infos</button></a>
                         {% endif %}
-                        <p>{{article.getNom()}}</p>
-                        {% if article.getDateAchat() is defined %}
-                            <p>{{article.getDateAchat()|date('Y-m-d')}}</p>
-                        {% endif %}
-                        {% if article.getType() is defined %}
-                            <p>{{article.getType()}}</p>
-                        {% endif %}
-                        <a href={{'/' ~ type ~ '/delete/' ~ article.getId()}}>Supprimer</a>
+                        <a class='col' href={{'/' ~ type ~ '/delete/' ~ article.getId()}}><button type='button' class='btn btn-danger mx-1'>Supprimer</button></a>
                     </div>
                 </div>
             {% endfor %}
         </div>
-    </body>
+    <div>
 {% endblock %}
