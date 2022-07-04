@@ -11,11 +11,11 @@ class ArticleFixtures extends Fixture
     public function load(ObjectManager $manager)
     {
         // create 20 products! Bam!
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 300; $i++) {
             $product = new Article();
             $product->setNom('product n°'.$i);
-            $product->setLieuAchat(mt_rand(1, 10));
-            $product->setCategorie(mt_rand(1, 10));
+            $product->setLieuAchat(mt_rand(1, 60));
+            $product->setCategorie(mt_rand(1, 40));
             $product->setDateAchat(new \DateTime());
             $product->setDateGarantie(new \DateTime('@'.strtotime('+1 year')));
             $product->setPrix(mt_rand(100, 10000));

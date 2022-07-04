@@ -12,7 +12,7 @@ class LieuAchatFixtures extends Fixture
     {
         // create 20 products! Bam!
         $type=['a distance', 'sur place'];
-        for ($i = 0; $i < 20; $i++) {
+        for ($i = 0; $i < 60; $i++) {
             $product = new LieuAchat();
             $product->setNom('LieuAchat n°'.$i);
             $product->setType($type[mt_rand(0,1)]);

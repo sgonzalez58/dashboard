@@ -12,4 +12,6 @@ import './styles/app.scss';
 import './bootstrap';
 
 // loads the jquery package from node_modules
-import $ from 'jquery';
+
+const $ = require('jquery');
+require('bootstrap');

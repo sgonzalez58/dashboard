@@ -9,11 +9,13 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\Article;
 use Doctrine\Persistence\ManagerRegistry;
+use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 class ArticleController extends AbstractController
 {
-    #[Route('/article', name: 'create_article')]
+    #[Route('/article/add', name: 'create_article')]
     public function createarticle(ManagerRegistry $doctrine): Response
     {
         $entityManager = $doctrine->getManager();
@@ -36,12 +38,43 @@ class ArticleController extends AbstractController
         return new Response('Saved new article with id '.$article->getId());
     }
 
-    #[Route('/article/all', name: 'article_showAll')]
+    #[Route('/article', name: 'article_showAll')]
     public function showAll(ManagerRegistry $doctrine): Response
     {
         $repository = $doctrine->getRepository(Article::class);
 
         $articles = $repository -> findAll();
+
+        $maxArticles = count($articles);
+
+        $request = Request::createFromGlobals();
+
+        $max = $request->query->get('max');
+        $page = $request->query->get('page');
+        $tri = $request->query->get('tri');
+        $sens = $request->query->get('sens');
+
+        if(!isset($max)){
+            $max = '25';
+        }
+        if(!isset($page)){
+            $page = '1';
+        }
+        if(!isset($tri)){
+            $tri = 'id';
+        }
+        if(!isset($sens)){
+            $sens = 'ASC';
+        }
+
+        $myPage = $repository -> findBy(
+            array(),
+            array($tri => $sens),
+            $max,
+            $max * ($page - 1),
+        );
+
+        $maxPages = ceil($maxArticles / $max);
 
         if (!$repository -> findAll()) {
             throw $this->createNotFoundException(
@@ -54,10 +87,15 @@ class ArticleController extends AbstractController
         // or render a template
         // in the template, print things with {{ article.name }}
         return $this->render('liste/index.html.twig', [
-            'articles' => $articles,
+            'articles' => $myPage,
+            'nbPageMax' =>  (string)$maxPages,
             'page_title' => 'Articles',
             'user' => $this->getUser(),
             'type' => 'article',
+            'max_product' => $max,
+            'page' => $page,
+            'tri' => $tri,
+            'sens' => $sens,
         ]);
     }
 
@@ -65,6 +103,7 @@ class ArticleController extends AbstractController
     public function show(ManagerRegistry $doctrine, int $id): Response
     {
         $article = $doctrine->getRepository(Article::class)->find($id);
+        
 
         if (!$article) {
             throw $this->createNotFoundException(

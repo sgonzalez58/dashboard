@@ -127,6 +127,37 @@ class LieuAchatController extends AbstractController
 
         $lieuxAchats = $repository -> findAll();
 
+        $maxLieux = count($lieuxAchats);
+
+        $request = Request::createFromGlobals();
+
+        $max = $request->query->get('max');
+        $page = $request->query->get('page');
+        $tri = $request->query->get('tri');
+        $sens = $request->query->get('sens');
+
+        if(!isset($max)){
+            $max = '25';
+        }
+        if(!isset($page)){
+            $page = '1';
+        }
+        if(!isset($tri)){
+            $tri = 'id';
+        }
+        if(!isset($sens)){
+            $sens = 'ASC';
+        }
+
+        $myPage = $repository -> findBy(
+            array(),
+            array($tri => $sens),
+            $max,
+            $max * ($page - 1),
+        );
+
+        $maxPages = ceil($maxLieux / $max);
+
         if (!$repository -> findAll()) {
             throw $this->createNotFoundException(
                 'No article found.'
@@ -138,10 +169,15 @@ class LieuAchatController extends AbstractController
         // or render a template
         // in the template, print things with {{ article.name }}
         return $this->render('liste/index.html.twig', [
-            'articles' => $lieuxAchats,
+            'articles' => $myPage,
+            'nbPageMax' =>  (string)$maxPages,
             'page_title' => 'LieuxAchats',
             'user' => $this->getUser(),
             'type' => 'lieuAchat',
+            'max_product' => $max,
+            'page' => $page,
+            'tri' => $tri,
+            'sens' => $sens,
         ]);
     }
 }
