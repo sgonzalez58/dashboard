@@ -1,0 +1,25 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}{{ my_title }}{% endblock %}
+
+{% block body %}
+    <div class='container min-vh-100'>
+        <div class='d-flex flex-wrap-reverse justify-content-between my-3'>
+                <h1 class='my-3' >{{ my_title }}</h1>
+                <a class='my-3'  href={{'/article'}}>
+                    <button type='button' class='btn btn-danger'>annuler</button>
+                </a>
+                <a class='my-3'  href={{'/'}}>
+                    <button type='button' class='btn btn-primary'>retour au menu</button>
+                </a>
+        </div>
+
+
+        {{ form_start(formArticle) }}
+            {{ form_row(formArticle.confirmation) }}
+
+            <button type="submit" class="btn btn-danger">Delete</button>
+        {{ form_end(formArticle) }}
+
+    </div>
+{% endblock %}

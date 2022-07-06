@@ -1,0 +1,36 @@
+{% extends 'base.html.twig' %}
+
+{% block body %}
+
+     <div class='container min-vh-100'>
+        <div class='d-flex flex-wrap-reverse justify-content-between my-3'>
+                <h1 class='my-3' >{{ article.Nom }}</h1>
+                <a class='my-3'  href={{'/article'}}>
+                    <button type='button' class='btn btn-danger'>annuler</button>
+                </a>
+                <a class='my-3'  href={{'/'}}>
+                    <button type='button' class='btn btn-primary'>retour au menu</button>
+                </a>
+        </div>
+        <article>
+            <div class"metadata">Achat le {{ article.getDateAchat() | date ('d/m/Y') }}</div>
+            <div class"metadata">Fin de garantie le {{ article.getDateGarantie() | date ('d/m/Y') }}</div>
+            <div class"content">
+                <div class"metadata"><h5>Categorie : {{ article.categorie.nom }}</h5></div>
+                <img src="{{ asset('build/images/' ~ article.photo) }}" width="350rem" height="350rem" alt="">
+                <div class"metadata"><h5>Prix en €: {{ article.prix }}</h5></div>
+                <div class"metadata"><h5>Lieu d'achat</h5>{{ article.getLieuAchat().nom | raw }}</div>
+                <p><h5>Zone de saisie</h5>{{ article.getZoneSaisie() | raw }}</p>
+                <p><h5>Notice</h5>{{ article.notice | raw }}</p>
+            </div>  
+        </article>
+        <a href={{ "/article/modifier/" ~ article.id }}>
+            <button class="btn btn-success">
+                Modifier 
+            </button>
+        </a>
+        <a href={{ "/article/delete/" ~ article.id}}>Supprimer</a>
+    </div>
+
+{% endblock %}
+       

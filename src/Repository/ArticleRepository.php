@@ -39,6 +39,21 @@ class ArticleRepository extends ServiceEntityRepository
         }
     }
 
+    public function search($value, $conditions = array(), $type = 'id', $sens = 'ASC', $limit = null, $offset = null):array
+    {
+        $myQuery = $this->createQueryBuilder('a');
+        $myQuery -> andWhere('a.nom LIKE :val');
+        $myQuery -> setParameter(':val', '%'.$value.'%');
+        foreach($conditions as $key => $myValue){
+            $myQuery -> andWhere('a.'.$key.'='.$myValue);
+        }
+        $myQuery->orderBy('a.'.$type, $sens);
+        $myQuery->setMaxResults($limit);
+        $myQuery ->setFirstResult($offset);
+        $myQuery = $myQuery->getQuery()->getResult();
+        return $myQuery;
+    }
+
 //    /**
 //     * @return Article[] Returns an array of Article objects
 //     */

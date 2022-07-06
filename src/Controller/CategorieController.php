@@ -169,7 +169,7 @@ class CategorieController extends AbstractController
 
         // or render a template
         // in the template, print things with {{ article.name }}
-        return $this->render('liste/index.html.twig', [
+        return $this->render('categorie/index.html.twig', [
             'articles' => $myPage,
             'nbPageMax' =>  (string)$maxPages,
             'page_title' => 'Categories',

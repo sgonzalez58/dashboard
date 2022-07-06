@@ -1,0 +1,26 @@
+{% extends 'base.html.twig' %}
+
+
+
+{% block body %}
+
+	<h1>Gestion d'un article</h1>
+
+    {{ form_start(formArticle) }}
+
+    {{ form_row(formArticle.Nom)}}
+    {{ form_row(formArticle.Prix)}}
+    {{ form_row(formArticle.PhotoTicket)}}
+    {{ form_row(formArticle.DateAchat)}}
+    {{ form_row(formArticle.DateGarantie)}}
+    {{ form_row(formArticle.LieuAchat)}}
+    {{ form_row(formArticle.ZoneSaisie)}}
+    {{ form_row(formArticle.Notice)}}
+
+        <button type="submit" class="btn btn-success">
+            modifier
+        </button> 
+
+    {{ form_end(formArticle) }}
+
+{% endblock %}

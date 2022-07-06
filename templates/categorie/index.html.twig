@@ -1,0 +1,127 @@
+{# templates/accueil/index.html.twig #}
+{% extends 'base.html.twig' %}
+
+{# ... #}
+
+{% block body %}
+    <div class='container min-vh-100'>
+        <div class='d-flex flex-wrap-reverse justify-content-between my-3'>
+                <h1 class='my-3'>{{ page_title }}</h1>
+                <a class='my-3 text-decoration-none' href={{'/'}}>
+                    <button type='button' class='btn btn-primary'>retour au menu</button>
+                </a>
+        </div>
+        
+        <div class='row col-12 g-0 col bg-primary justify-content-around bg-opacity-50 text-center border rounded align-self-start'>
+            <div class='dropdown d-flex justify-content-center flex-wrap align-items-center col-md-6 m-2'>
+                <p class='my-0 me-3'>Nombre d'article par page</p>
+                <button class='btn btn-info dropdown-toggle' type='button' id="nbArticles" data-bs-toggle='dropdown' aria-expanded="false">{{ max_product }}</button>
+                <ul class='dropdown-menu' aria-labelledby="nbArticles">
+                    <li><a class='dropdown-item text-decoration-none' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=25' ~ '&tri=' ~ tri ~ '&sens=' ~ sens}}>25</a></li>
+                    <li><a class='dropdown-item text-decoration-none' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=50' ~ '&tri=' ~ tri ~ '&sens=' ~ sens}}>50</a></li>
+                    <li><a class='dropdown-item text-decoration-none' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=75' ~ '&tri=' ~ tri ~ '&sens=' ~ sens}}>75</a></li>
+                    <li><a class='dropdown-item text-decoration-none' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=100' ~ '&tri=' ~ tri ~ '&sens=' ~ sens}}>100</a></li>
+                </ul>
+            </div>
+            <a class='row col-sm-4 col-md-3 col-lg-2 justify-content-center text-decoration-none m-2' href={{'/' ~ type ~ '/add'}}>
+                <button type='button' class='btn btn-danger'>ajouter</button>
+            </a>
+        </div>
+        {% if not articles is empty %}
+            <div class='row col-12 border rounded g-0'>
+                {% set color = 1 %}
+                <div class='row col-12 g-0 col bg-primary justify-content-around bg-opacity-50 text-center'>
+                    {% if tri is same as('id') %}
+                        {% if sens is same as('ASC') %}
+                            <a class='text-decoration-none col-2 col-md-1 mx-auto my-2 text-dark' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=' ~ max_product ~ '&tri=id&sens=DESC'}}><p class='m-0'>Id&nbsp;&#x25BC;</p></a>
+                        {% else %}
+                            <a class='text-decoration-none col-2 col-md-1 mx-auto my-2 text-dark' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=' ~ max_product ~ '&tri=id&sens=ASC'}}><p class='m-0'>Id&nbsp;&#x25B2;</p></a>
+                        {% endif %}
+                    {% else %}
+                        <a class='text-decoration-none col-2 col-md-1 mx-auto my-2 text-dark' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=' ~ max_product ~ '&tri=id&sens=ASC'}}><p class='m-0'>Id</p></a>
+                    {% endif %}
+                    {% if tri is same as('nom') %}
+                        {% if sens is same as('ASC') %}
+                            <a class='text-decoration-none col-sm-3 mx-auto my-2 text-dark' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=' ~ max_product ~ '&tri=nom&sens=DESC'}}><p class='m-0'>Nom&nbsp;&#x25BC;</p></a>
+                        {% else %}
+                            <a class='text-decoration-none col-sm-3 mx-auto my-2 text-dark' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=' ~ max_product ~ '&tri=nom&sens=ASC'}}><p class='m-0'>Nom&nbsp;&#x25B2;</p></a>
+                        {% endif %}
+                    {% else %}
+                        <a class='text-decoration-none col-sm-3 mx-auto my-2 text-dark' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=' ~ max_product ~ '&tri=nom&sens=ASC'}}><p class='m-0'>Nom</p></a>
+                    {% endif %}
+                    {% set article = articles[0] %}
+                    {% if article.getDateAchat() is defined %}
+                        {% if tri is same as('date_achat') %}
+                            {% if sens is same as('ASC') %}
+                                <a class='text-decoration-none col-sm-3 mx-auto my-2 text-dark' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=' ~ max_product ~ '&tri=date_achat&sens=DESC'}}><p class='m-0'>Date d'achat&nbsp;&#x25BC;</p></a>
+                            {% else %}
+                                <a class='text-decoration-none col-sm-3 mx-auto my-2 text-dark' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=' ~ max_product ~ '&tri=date_achat&sens=ASC'}}><p class='m-0'>Date d'achat&nbsp;&#x25B2;</p></a>
+                            {% endif %}
+                        {% else %}
+                            <a class='text-decoration-none col-sm-3 mx-auto my-2 text-dark' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=' ~ max_product ~ '&tri=date_achat&sens=ASC'}}><p class='m-0'>Date d'achat</p></a>
+                        {% endif %}
+                    {% endif %}
+                    {% if article.getType() is defined %}
+                        {% if tri is same as('type') %}
+                            {% if sens is same as('ASC') %}
+                                <a class='text-decoration-none col-sm-3 mx-auto my-2 text-dark' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=' ~ max_product ~ '&tri=type&sens=DESC'}}><p class='m-0'>Sur place/A distance&nbsp;&#x25BC;</p></a>
+                            {% else %}
+                                <a class='text-decoration-none col-sm-3 mx-auto my-2 text-dark' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=' ~ max_product ~ '&tri=type&sens=ASC'}}><p class='m-0'>Sur place/A distance&nbsp;&#x25B2;</p></a>
+                            {% endif %}
+                        {% else %}
+                            <a class='text-decoration-none col-sm-3 mx-auto my-2 text-dark' href={{'/' ~ type ~ '?page=' ~ page ~ '&max=' ~ max_product ~ '&tri=type&sens=ASC'}}><p class='m-0'>Sur place/A distance</p></a>
+                        {% endif %}
+                    {% endif %}
+                    <div class='row col-md-5 g-0'></div>
+                </div>
+                {% for article in articles %}
+                    {% if color %}
+                        {% set color = 0 %}
+                        <div class='row col-12 g-0 col bg-info justify-content-around bg-opacity-50 text-center'>
+                    {% else %}
+                        {% set color = 1 %}
+                        <div class='row col-12 g-0 col bg-light justify-content-around text-center'>
+                    {% endif %}
+                        <p class='col-2 col-md-1 m-auto'> {{ article.getId() }}</p>
+                        <p class='col-sm-3 m-auto' my-2>{{article.getNom()}}</p>
+                        {% if article.getDateAchat() is defined %}
+                            <p class=' col-sm-3 m-auto'>{{article.getDateAchat()|date('Y-m-d')}}</p>
+                        {% endif %}
+                        {% if article.getType() is defined %}
+                            <p class=' col-sm-3 m-auto'>{{article.getType()}}</p>
+                        {% endif %}
+                        <div class='row col-md-5 g-0'>
+                            {% if type is same as('categorie') %}
+                                <a class='col text-decoration-none m-sm-2' href={{'/' ~ type ~ '/' ~ article.getId()}}><button type='button' class='btn btn-primary mx-1'>Modifier</button></a>
+                            {% else %}
+                                <a class='col text-decoration-none m-sm-2' href={{'/' ~ type ~ '/' ~ article.getId()}}><button type='button' class='btn btn-primary mx-1'>Plus d'infos</button></a>
+                            {% endif %}
+                            <a class='col text-decoration-none m-sm-2' href={{'/' ~ type ~ '/delete/' ~ article.getId()}}><button type='button' class='btn btn-danger mx-1'>Supprimer</button></a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            <div class='row col-12 justify-content-center my-3'>
+                {% if not page is same as('1') %}
+                    <a class='col col-md-2 d-flex justify-content-center text-decoration-none' href={{'/' ~ type ~ '?page=' ~ (page - 1) ~ '&max=' ~ max_product ~ '&tri=' ~ tri ~ '&sens=' ~ sens}}><button type='button' class='btn btn-primary'>Previous</button></a>
+                    <a class='col col-sm-1 d-flex justify-content-center text-decoration-none' href={{'/' ~ type ~ '?page=1' ~ '&max=' ~ max_product  ~ '&tri=' ~ tri ~ '&sens=' ~ sens}}><div class='p-2'>1</div></a>
+                    <div class='col col-sm-1 d-flex justify-content-center text-decoration-none'>...</div>
+                {% endif %}
+                <div class='dropdown d-flex justify-content-center col-sm-1 col'>
+                    <button class='btn btn-info dropdown-toggle' type='button' id="dropdownMenuButton1" data-bs-toggle='dropdown' aria-expanded="false">{{page}}</button>
+                    <ul class='dropdown-menu' aria-labelledby="dropdownMenuButton1">
+                    {% for p in 1..nbPageMax %}
+                        <li><a class='dropdown-item text-decoration-none' href={{'/' ~ type ~ '?page=' ~ p ~ '&max=' ~ max_product ~ '&tri=' ~ tri ~ '&sens=' ~ sens}}>{{ p }}</a></li>
+                    {% endfor %}
+                    </ul>
+                </div>
+                {% if not page is same as(nbPageMax) %}
+                    <div class='col col-sm-1 d-flex justify-content-center'>...</div>
+                    <a class='col col-sm-1 d-flex justify-content-center text-decoration-none' href={{'/' ~ type ~ '?page=' ~ nbPageMax ~ '&max=' ~ max_product ~ '&tri=' ~ tri ~ '&sens=' ~ sens}}><div class='p-2'>{{ nbPageMax }}</div></a>
+                    <a class='col col-md-2 d-flex justify-content-center text-decoration-none' href={{'/' ~ type ~ '?page=' ~ (page + 1) ~ '&max=' ~ max_product ~ '&tri=' ~ tri ~ '&sens=' ~ sens}}><button type='button' class='btn btn-primary'>Next</button></a>
+                {% endif %}
+            </div>
+        {% endif %}
+                
+    <div>
+{% endblock %}
