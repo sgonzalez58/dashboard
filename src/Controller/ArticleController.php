@@ -9,6 +9,7 @@ use Symfony\Component\Routing\Annotation\Route;
 
 use App\Entity\Article;
 use App\Entity\Categorie;
+use App\Entity\LieuAchat;
 use Doctrine\Persistence\ManagerRegistry;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Form\AddArticleFormType;
@@ -70,14 +71,9 @@ class ArticleController extends AbstractController
         $form = $this->createForm(rechercheType::class, $article);
         $form->handleRequest($request);
 
-        $articles = $repository -> findAll();
+        $categories = $doctrine->getRepository(Categorie::class);
 
-        $maxArticles = count($articles);
-
-        $categories = $doctrine->getRepository(Categorie::class)->findBy(
-            array(),
-            array('id' => 'ASC')
-        );
+        $lieux = $doctrine->getRepository(LieuAchat::class);
 
         $conditions = array();
 
@@ -89,6 +85,7 @@ class ArticleController extends AbstractController
         $tri = $request->query->get('tri');
         $sens = $request->query->get('sens');
         $categorie = $request->query->get('categorie');
+        $lieu = $request->query->get('lieu');
 
         if(!isset($max)){
             $max = '25';
@@ -105,7 +102,12 @@ class ArticleController extends AbstractController
         if(!isset($categorie) || $categorie == ''){
             $categorie = '';
         }else{
-            $conditions = array_fill_keys(['categorie'], $categorie);
+            $conditions = array_merge($conditions, array_fill_keys(['categorie'], $categorie));
+        }
+        if(!isset($lieu) || $lieu == ''){
+            $lieu = '';
+        }else{
+            $conditions = array_merge($conditions, array_fill_keys(['lieu_achat'], $lieu));
         }
 
         if(isset($nom) && $nom != ''){
@@ -122,9 +124,6 @@ class ArticleController extends AbstractController
                 $nom,
                 $conditions
             );
-
-            $maxArticles = count($articles);
-
         }else{
             $nom = '';
             $myPage = $repository -> findBy(
@@ -133,7 +132,13 @@ class ArticleController extends AbstractController
                 $max,
                 $max * ($page - 1),
             );
+
+            $articles = $repository ->findBy(
+                $conditions,
+            );
         }
+
+        $maxArticles = count($articles);
 
         $maxPages = ceil($maxArticles / $max);
 
@@ -154,7 +159,9 @@ class ArticleController extends AbstractController
             'form' => $form,
             'nom' => $nom,
             'categories' => $categories,
-            'categorie' => $categorie
+            'categorie' => $categorie,
+            'lieuxachats' => $lieux,
+            'lieu' => $lieu,
         ]);
     }
 
