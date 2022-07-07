@@ -87,64 +87,96 @@ class ArticleController extends AbstractController
         $categorie = $request->query->get('categorie');
         $lieu = $request->query->get('lieu');
         $distance = $request->query->get('distance');
+        $garantie = $request->query->get('garantie');
+        $apres = $request->query->get('apres');
+        $avant = $request->query->get('avant');
+        $sup = $request->query->get('sup');
+        $inf = $request->query->get('inf');
 
         if(!isset($max)){
             $max = '25';
         }
+
         if(!isset($page)){
             $page = '1';
         }
+
         if(!isset($tri)){
             $tri = 'id';
         }
+
         if(!isset($sens)){
             $sens = 'ASC';
         }
+
         if(!isset($categorie) || $categorie == ''){
             $categorie = '';
         }else{
             $conditions = array_merge($conditions, array_fill_keys(['categorie'], $categorie));
         }
+
         if(!isset($lieu) || $lieu == ''){
             $lieu = '';
+            if(!isset($distance) || $distance == ''){
+                $distance = '';
+            }else{
+                $mesLieux = $lieux->findBy(['type' => $distance]);
+                $conditions = array_merge($conditions, array_fill_keys(['lieu_achat'], $mesLieux));
+            }
         }else{
             $conditions = array_merge($conditions, array_fill_keys(['lieu_achat'], $lieu));
-        }
-        if(!isset($distance) || $distance == ''){
-            $distance = '';
-        }else{
-            $mesLieux = $lieux->findBy(['type' => $distance]);
-            $conditions = array_merge($conditions, array_fill_keys(['lieu_achat'], $mesLieux));
+            if(!isset($distance) || $distance == ''){
+                $distance = '';
+            }
         }
 
-        if(isset($nom) && $nom != ''){
-            $myPage = $repository ->search(
-                $nom,
-                $conditions,
-                $tri,
-                $sens,
-                $max,
-                $max * ($page - 1),
-            );
-
-            $articles = $repository ->search(
-                $nom,
-                $conditions
-            );
+        if(!isset($garantie) || $garantie == ''){
+            $garantie = '';
         }else{
+            $conditions = array_merge($conditions, array_fill_keys(['date_garantie'], $garantie));
+        }
+        if(!isset($apres) || $apres == ''){
+            $apres = '';
+        }else{
+            $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['apres', $apres]));
+        }
+
+        if(!isset($avant) || $avant == ''){
+            $avant = '';
+        }else{
+            $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['avant', $avant]));
+        }
+
+        if(!isset($sup) || $sup == ''){
+            $sup = '';
+        }else{
+            $conditions = array_merge($conditions, array_fill_keys(['prix'], ['sup', $sup]));
+        }
+
+        if(!isset($inf) || $inf == ''){
+            $inf = '';
+        }else{
+            $conditions = array_merge($conditions, array_fill_keys(['prix'], ['inf', $inf]));
+        }
+
+        if(!isset($nom)){
             $nom = '';
-            $myPage = $repository -> findBy(
-                $conditions,
-                array($tri => $sens),
-                $max,
-                $max * ($page - 1),
-            );
-
-            $articles = $repository ->findBy(
-                $conditions,
-            );
         }
 
+        $myPage = $repository ->search(
+            $nom,
+            $conditions,
+            $tri,
+            $sens,
+            $max,
+            $max * ($page - 1),
+        );
+
+        $articles = $repository ->search(
+            $nom,
+            $conditions
+        );
+        
         $maxArticles = count($articles);
 
         $maxPages = ceil($maxArticles / $max);
@@ -169,7 +201,12 @@ class ArticleController extends AbstractController
             'categorie' => $categorie,
             'lieuxachats' => $lieux,
             'lieu' => $lieu,
-            'distance' => $distance
+            'distance' => $distance,
+            'garantie' => $garantie,
+            'apres' => $apres,
+            'avant' => $avant,
+            'sup' => $sup,
+            'inf' => $inf,
         ]);
     }
 

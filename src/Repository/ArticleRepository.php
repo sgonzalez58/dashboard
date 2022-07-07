@@ -46,12 +46,32 @@ class ArticleRepository extends ServiceEntityRepository
         $myQuery -> setParameter(':val', '%'.$value.'%');
         foreach($conditions as $key => $myValue){
             if(is_array($myValue)){
-                $arrayQuery = '(a.'.$key.'='.array_shift($myValue)->getId();
-                foreach($myValue as $oneValue){
-                    $arrayQuery = $arrayQuery.' OR a.'.$key.'='.($oneValue)->getId();
+                if($key == 'date_achat'){
+                    if($myValue[0] == 'apres'){
+                        $myQuery -> andWhere('a.'.$key.'> \''.$myValue[1].'\'');
+                    }else{
+                        $myQuery -> andWhere('a.'.$key.'< \''.$myValue[1].'\'');
+                    }
+                }elseif($key == 'prix'){
+                    if($myValue[0] == 'sup'){
+                        $myQuery -> andWhere('a.'.$key.'>'.$myValue[1].'');
+                    }else{
+                        $myQuery -> andWhere('a.'.$key.'<'.$myValue[1].'');
+                    }
+                }else{
+                    $arrayQuery = '(a.'.$key.'='.array_shift($myValue)->getId();
+                    foreach($myValue as $oneValue){
+                        $arrayQuery = $arrayQuery.' OR a.'.$key.'='.($oneValue)->getId();
+                    }
+                    $arrayQuery = $arrayQuery.' )';
+                    $myQuery-> andWhere($arrayQuery);
                 }
-                $arrayQuery = $arrayQuery.' )';
-                $myQuery-> andWhere($arrayQuery);
+            }elseif($key == 'date_garantie'){
+                if($myValue == 'oui'){
+                    $myQuery -> andWhere('a.'.$key.'>= \''.(date('Y-m-d', (new \DateTime())->getTimestamp())).'\'');
+                }else{
+                    $myQuery -> andWhere('a.'.$key.'< \''.(date('Y-m-d', (new \DateTime())->getTimestamp())).'\'');
+                }
             }else{
                 $myQuery -> andWhere('a.'.$key.'='.$myValue);
             }
