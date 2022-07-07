@@ -86,6 +86,7 @@ class ArticleController extends AbstractController
         $sens = $request->query->get('sens');
         $categorie = $request->query->get('categorie');
         $lieu = $request->query->get('lieu');
+        $distance = $request->query->get('distance');
 
         if(!isset($max)){
             $max = '25';
@@ -108,6 +109,12 @@ class ArticleController extends AbstractController
             $lieu = '';
         }else{
             $conditions = array_merge($conditions, array_fill_keys(['lieu_achat'], $lieu));
+        }
+        if(!isset($distance) || $distance == ''){
+            $distance = '';
+        }else{
+            $mesLieux = $lieux->findBy(['type' => $distance]);
+            $conditions = array_merge($conditions, array_fill_keys(['lieu_achat'], $mesLieux));
         }
 
         if(isset($nom) && $nom != ''){
@@ -162,6 +169,7 @@ class ArticleController extends AbstractController
             'categorie' => $categorie,
             'lieuxachats' => $lieux,
             'lieu' => $lieu,
+            'distance' => $distance
         ]);
     }
 

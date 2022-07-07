@@ -45,7 +45,16 @@ class ArticleRepository extends ServiceEntityRepository
         $myQuery -> andWhere('a.nom LIKE :val');
         $myQuery -> setParameter(':val', '%'.$value.'%');
         foreach($conditions as $key => $myValue){
-            $myQuery -> andWhere('a.'.$key.'='.$myValue);
+            if(is_array($myValue)){
+                $arrayQuery = '(a.'.$key.'='.array_shift($myValue)->getId();
+                foreach($myValue as $oneValue){
+                    $arrayQuery = $arrayQuery.' OR a.'.$key.'='.($oneValue)->getId();
+                }
+                $arrayQuery = $arrayQuery.' )';
+                $myQuery-> andWhere($arrayQuery);
+            }else{
+                $myQuery -> andWhere('a.'.$key.'='.$myValue);
+            }
         }
         $myQuery->orderBy('a.'.$type, $sens);
         $myQuery->setMaxResults($limit);
