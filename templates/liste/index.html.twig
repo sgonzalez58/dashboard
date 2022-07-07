@@ -30,7 +30,7 @@
                             <p class='col-12 g-0 m-0'>Categories</p>
                             <a class='col-10 g-0 ms-3 text-dark text-decoration-none' href={{'/' ~ type ~ '?search=' ~ nom ~ '&page=' ~ page ~ '&max=' ~ max_product ~ '&tri=' ~ tri ~ '&sens=' ~ sens ~ '&lieu=' ~ lieu ~ '&distance=' ~ distance ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><p class='m-0'>Toutes les catégories</p></a>
                             {% for laCategorie in categories.findBy([],{'id': 'ASC'}) %}
-                                <a class='col-10 g-0 ms-3 text-dark text-decoration-none' href={{'/' ~ type ~ '?search=' ~ nom ~ '&page=' ~ page ~ '&max=' ~ max_product ~ '&tri=' ~ tri ~ '&sens=' ~ sens ~ '&lieu=' ~ lieu ~ '&categorie=' ~ laCategorie.getId() ~ '&distance=' ~ (distance|url_encode()) ~ '&apres=' ~ apres ~ '&avant=' ~ avant~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><p class='m-0'>{{ laCategorie.getNom() ~ '&garantie=' ~ garantie }}</p></a>
+                                <a class='col-10 g-0 ms-3 text-dark text-decoration-none' href={{'/' ~ type ~ '?search=' ~ nom ~ '&page=' ~ page ~ '&max=' ~ max_product ~ '&tri=' ~ tri ~ '&sens=' ~ sens ~ '&lieu=' ~ lieu ~ '&categorie=' ~ laCategorie.getId() ~ '&distance=' ~ (distance|url_encode()) ~ '&apres=' ~ apres ~ '&avant=' ~ avant~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><p class='m-0'>{{ laCategorie.getNom() }}</p></a>
                             {% endfor %}
                         {% else %}
                             {% if categorie is same as('') %}

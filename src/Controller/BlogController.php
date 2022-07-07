@@ -16,4 +16,10 @@ class BlogController extends AbstractController
             'user' => $this->getUser(),
         ]);
     }
+
+    #[Route('/stats', name: 'stats')]   
+        public function statistiques(){
+            return $this->render('accueil/stats.html.twig');
+        }
+
 }
