@@ -75,7 +75,6 @@ class ArticleController extends AbstractController
         $repository = $doctrine->getRepository(Article::class);
 
         $article = new Article();
-
         $form = $this->createForm(rechercheType::class, $article);
         $form->handleRequest($request);
 
@@ -103,12 +102,13 @@ class ArticleController extends AbstractController
         $sup = $request->query->get('sup');
         $inf = $request->query->get('inf');
 
-        if(!isset($max)){
-            $max = '25';
+        if(isset($max)){
+            $session->set('max', $max);
+            $session->remove('page');
         }
 
-        if(!isset($page)){
-            $page = '1';
+        if(isset($page)){
+            $session->set('page', $page);
         }
 
         if(!isset($tri)){
@@ -179,6 +179,7 @@ class ArticleController extends AbstractController
 
         if(isset($nom)){
             $session->set('nom', $nom);
+            $session->remove('page');
         }
 
         $myPage = $repository ->search(
@@ -186,8 +187,8 @@ class ArticleController extends AbstractController
             $conditions,
             $tri,
             $sens,
-            $max,
-            $max * ($page - 1),
+            $session->get('max', 25),
+            $session->get('max', 25) * ($session->get('page', 1) - 1),
         );
 
         $articles = $repository ->search(
@@ -197,7 +198,7 @@ class ArticleController extends AbstractController
         
         $maxArticles = count($articles);
 
-        $maxPages = ceil($maxArticles / $max);
+        $maxPages = ceil($maxArticles / $session->get('max', 25));
 
         //return new Response($response);
 
@@ -209,8 +210,8 @@ class ArticleController extends AbstractController
             'page_title' => 'Articles',
             'user' => $this->getUser(),
             'type' => 'article',
-            'max_product' => $max,
-            'page' => $page,
+            'max_product' => $session->get('max', '25'),
+            'page' => $session->get('page', '1'),
             'tri' => $tri,
             'sens' => $sens,
             'form' => $form,
