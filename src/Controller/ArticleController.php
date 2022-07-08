@@ -92,7 +92,6 @@ class ArticleController extends AbstractController
         $max = $request->query->get('max');
         $page = $request->query->get('page');
         $tri = $request->query->get('tri');
-        $sens = $request->query->get('sens');
         $categorie = $request->query->get('categorie');
         $lieu = $request->query->get('lieu');
         $distance = $request->query->get('distance');
@@ -111,12 +110,18 @@ class ArticleController extends AbstractController
             $session->set('page', $page);
         }
 
-        if(!isset($tri)){
-            $tri = 'id';
-        }
-
-        if(!isset($sens)){
-            $sens = 'ASC';
+        if(isset($tri)){
+            if($session->get('tri', 'id') == $tri)
+                if($session->get('sens', 'ASC') == 'ASC'){
+                    $session->set('sens', 'DESC');
+                }else{
+                    $session->set('sens', 'ASC');
+                }
+            else{
+                $session->set('tri', $tri);
+                $session->remove('sens');
+            }
+            $session->remove('page');
         }
 
         if(!isset($categorie) || $categorie == ''){
@@ -185,8 +190,8 @@ class ArticleController extends AbstractController
         $myPage = $repository ->search(
             $session->get('nom', ''),
             $conditions,
-            $tri,
-            $sens,
+            $session->get('tri', 'id'),
+            $session->get('sens', 'ASC'),
             $session->get('max', 25),
             $session->get('max', 25) * ($session->get('page', 1) - 1),
         );
@@ -212,8 +217,8 @@ class ArticleController extends AbstractController
             'type' => 'article',
             'max_product' => $session->get('max', '25'),
             'page' => $session->get('page', '1'),
-            'tri' => $tri,
-            'sens' => $sens,
+            'tri' => $session->get('tri', 'id'),
+            'sens' => $session->get('sens', 'ASC'),
             'form' => $form,
             'nom' => $session->get('nom'),
             'categories' => $categories,
