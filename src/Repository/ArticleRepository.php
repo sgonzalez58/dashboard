@@ -49,14 +49,18 @@ class ArticleRepository extends ServiceEntityRepository
                 if($key == 'date_achat'){
                     if($myValue[0] == 'apres'){
                         $myQuery -> andWhere('a.'.$key.'> \''.$myValue[1].'\'');
-                    }else{
+                    }elseif($myValue[0] == 'avant'){
                         $myQuery -> andWhere('a.'.$key.'< \''.$myValue[1].'\'');
+                    }else{
+                        $myQuery -> andWhere('a.'.$key.' BETWEEN \''.$myValue[1].'\' AND \''.$myValue[2].'\'');
                     }
                 }elseif($key == 'prix'){
                     if($myValue[0] == 'sup'){
-                        $myQuery -> andWhere('a.'.$key.'>'.$myValue[1].'');
+                        $myQuery -> andWhere('a.'.$key.'>'.$myValue[1]);
+                    }elseif($myValue[0] == 'inf'){
+                        $myQuery -> andWhere('a.'.$key.'<'.$myValue[1]);
                     }else{
-                        $myQuery -> andWhere('a.'.$key.'<'.$myValue[1].'');
+                        $myQuery -> andWhere('a.'.$key.' BETWEEN '.$myValue[1].' AND '.$myValue[2].'');
                     }
                 }else{
                     $arrayQuery = '(a.'.$key.'='.array_shift($myValue)->getId();

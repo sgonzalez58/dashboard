@@ -16,11 +16,19 @@ use App\Form\AddArticleFormType;
 use App\Form\DeleteArticleFormType;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\RequestStack;
 
 use App\Form\rechercheType;
 
 class ArticleController extends AbstractController
 {
+    private $requestStack;
+
+    public function __construct(RequestStack $requestStack)
+    {
+        $this->requestStack = $requestStack;
+    }
+
     #[Route('/article/add', name: 'create_article')]
     public function createarticle(Request $request, ManagerRegistry $doctrine): Response
     {
@@ -76,6 +84,8 @@ class ArticleController extends AbstractController
         $lieux = $doctrine->getRepository(LieuAchat::class);
 
         $conditions = array();
+
+        $session = $this->requestStack->getSession();
 
         $request = Request::createFromGlobals();
 
@@ -137,34 +147,42 @@ class ArticleController extends AbstractController
         }
         if(!isset($apres) || $apres == ''){
             $apres = '';
+            if(!isset($avant) || $avant == ''){
+                $avant = '';
+            }else{
+                $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['avant', $avant]));
+            }
         }else{
-            $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['apres', $apres]));
-        }
-
-        if(!isset($avant) || $avant == ''){
-            $avant = '';
-        }else{
-            $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['avant', $avant]));
+            if(!isset($avant) || $avant == ''){
+                $avant = '';
+                $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['apres', $apres]));
+            }else{
+                $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['entre', $apres, $avant]));
+            }
         }
 
         if(!isset($sup) || $sup == ''){
             $sup = '';
+            if(!isset($inf) || $inf == ''){
+                $inf = '';
+            }else{
+                $conditions = array_merge($conditions, array_fill_keys(['prix'], ['inf', $inf]));
+            }
         }else{
-            $conditions = array_merge($conditions, array_fill_keys(['prix'], ['sup', $sup]));
+            if(!isset($inf) || $inf == ''){
+                $inf = '';
+                $conditions = array_merge($conditions, array_fill_keys(['prix'], ['sup', $sup]));
+            }else{
+                $conditions = array_merge($conditions, array_fill_keys(['prix'], ['entre', $sup, $inf]));
+            }
         }
 
-        if(!isset($inf) || $inf == ''){
-            $inf = '';
-        }else{
-            $conditions = array_merge($conditions, array_fill_keys(['prix'], ['inf', $inf]));
-        }
-
-        if(!isset($nom)){
-            $nom = '';
+        if(isset($nom)){
+            $session->set('nom', $nom);
         }
 
         $myPage = $repository ->search(
-            $nom,
+            $session->get('nom', ''),
             $conditions,
             $tri,
             $sens,
@@ -173,7 +191,7 @@ class ArticleController extends AbstractController
         );
 
         $articles = $repository ->search(
-            $nom,
+            $session->get('nom', ''),
             $conditions
         );
         
@@ -196,7 +214,7 @@ class ArticleController extends AbstractController
             'tri' => $tri,
             'sens' => $sens,
             'form' => $form,
-            'nom' => $nom,
+            'nom' => $session->get('nom'),
             'categories' => $categories,
             'categorie' => $categorie,
             'lieuxachats' => $lieux,
