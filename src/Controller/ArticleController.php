@@ -192,6 +192,7 @@ class ArticleController extends AbstractController
                     $session->set('garantie', $garantie);
                 }
             }
+            $session->remove('page');
         }
 
         if($session->has('garantie')){       
@@ -199,37 +200,71 @@ class ArticleController extends AbstractController
         }
 
 
-        if(!isset($apres) || $apres == ''){
-            $apres = '';
-            if(!isset($avant) || $avant == ''){
-                $avant = '';
+        if(isset($apres)){
+            if($apres == ''){
+                $session->remove('apres');
             }else{
-                $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['avant', $avant]));
+                $session->set('apres', $apres);
+            }
+            $session->remove('page');
+        }
+
+        if(isset($avant)){
+            if($avant == ''){
+                $session->remove('avant');
+            }else{
+                $session->set('avant', $avant);
+            }
+            $session->remove('page');
+        }
+
+
+        if($session->has('apres')){
+            if($session->has('avant')){
+                $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['entre', $session->get('apres'), $session->get('avant')]));
+            }else{
+                $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['apres', $session->get('apres')]));
             }
         }else{
-            if(!isset($avant) || $avant == ''){
-                $avant = '';
-                $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['apres', $apres]));
-            }else{
-                $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['entre', $apres, $avant]));
+            if($session->has('avant')){
+                $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['avant', $session->get('avant')]));
             }
         }
 
-        if(!isset($sup) || $sup == ''){
-            $sup = '';
-            if(!isset($inf) || $inf == ''){
-                $inf = '';
+
+
+        if(isset($sup)){
+            if($sup == ''){
+                $session->remove('sup');
             }else{
-                $conditions = array_merge($conditions, array_fill_keys(['prix'], ['inf', $inf]));
+                $session->set('sup', $sup);
+            }
+            $session->remove('page');
+        }
+
+        if(isset($inf)){
+            if($inf == ''){
+                $session->remove('inf');
+            }else{
+                $session->set('inf', $inf);
+            }
+            $session->remove('page');
+        }
+
+
+        if($session->has('sup')){
+            if($session->has('inf')){
+                $conditions = array_merge($conditions, array_fill_keys(['prix'], ['entre', $session->get('sup'), $session->get('inf')]));
+            }else{
+                $conditions = array_merge($conditions, array_fill_keys(['prix'], ['sup', $session->get('sup')]));
             }
         }else{
-            if(!isset($inf) || $inf == ''){
-                $inf = '';
-                $conditions = array_merge($conditions, array_fill_keys(['prix'], ['sup', $sup]));
-            }else{
-                $conditions = array_merge($conditions, array_fill_keys(['prix'], ['entre', $sup, $inf]));
+            if($session->has('inf')){
+                $conditions = array_merge($conditions, array_fill_keys(['prix'], ['inf', $session->get('inf')]));
             }
         }
+
+
 
         if(isset($nom)){
             $session->set('nom', $nom);
@@ -274,10 +309,10 @@ class ArticleController extends AbstractController
             'lieu' => $session->get('lieuAchat', ''),
             'distance' => $session->get('distance', ''),
             'garantie' => $session->get('garantie', ''),
-            'apres' => $apres,
-            'avant' => $avant,
-            'sup' => $sup,
-            'inf' => $inf,
+            'apres' => $session->get('apres', ''),
+            'avant' => $session->get('avant', ''),
+            'sup' => $session->get('sup', ''),
+            'inf' => $session->get('inf', ''),
         ]);
     }
 
