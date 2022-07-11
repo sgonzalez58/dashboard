@@ -14,207 +14,192 @@
                     <button type='button' class='btn btn-primary'>retour au menu</button>
                 </a>
         </div>
-        {% if type is same as('article') %}
-            <div class='row col-12 g-0 justify-content-center'>
-                <div class='row col-12 col-md-3 g-0 bg-info bg-opacity-25 border rounded justify-content-center align-self-start'>
-                    <form class='col-8 col-md-10 row g-0 justify-content-center my-3' action={{ '/article' }}>
-                        {% if nom is same as('') %}
-                            <input class='col-10 col-sm-8 col-lg-9 col-lg-4 g-0' type="text" id="search" name="search" placeholder='recherche'>
+        <div class='row col-12 g-0 justify-content-center'>
+            <div class='row col-12 col-md-3 g-0 bg-info bg-opacity-25 border rounded justify-content-center align-self-start'>
+                <form class='col-8 col-md-10 row g-0 justify-content-center my-3' action={{ '/article' }}>
+                    {% if nom is same as('') %}
+                        <input class='col-10 col-sm-8 col-lg-9 col-lg-4 g-0' type="text" id="search" name="search" placeholder='recherche'>
+                    {% else %}
+                        <input class='col-10 col-sm-8 col-lg-9 col-lg-4 g-0' type="text" id="search" name="search" placeholder='recherche' value={{ nom }}>
+                    {% endif %}
+                    <button type="submit" class="btn btn-secondary col-2 col-md-2 g-0 p-1" style='min-width:34px;'>&#x1F50E;</button>
+                </form>
+                <div class='col-10 row g-0 my-3'>
+                    {% if categories.findAll()|length < 10 %}
+                        <p class='col-12 g-0 m-0'>Categories</p>
+                        <a class='col-10 g-0 ms-3 text-dark text-decoration-none' href={{'/article' ~ '?categorie=all&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><p class='m-0'>Toutes les catégories</p></a>
+                        {% for laCategorie in categories.findBy([],{'id': 'ASC'}) %}
+                            <a class='col-10 g-0 ms-3 text-dark text-decoration-none' href={{'/article' ~ '?categorie=' ~ laCategorie.getId() ~ '&apres=' ~ apres ~ '&avant=' ~ avant~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><p class='m-0'>{{ laCategorie.getNom() }}</p></a>
+                        {% endfor %}
+                    {% else %}
+                        {% if categorie is same as('') %}
+                            <button class='btn btn-info dropdown-toggle col-12' type='button' id="mesCategories" data-bs-toggle='dropdown' aria-expanded="false">Categorie</button>
                         {% else %}
-                            <input class='col-10 col-sm-8 col-lg-9 col-lg-4 g-0' type="text" id="search" name="search" placeholder='recherche' value={{ nom }}>
+                            <button class='btn btn-info dropdown-toggle col-12' type='button' id="mesCategories" data-bs-toggle='dropdown' aria-expanded="false">{{ categories.find(categorie).getNom() }}</button>
                         {% endif %}
-                        <button type="submit" class="btn btn-secondary col-2 col-md-2 g-0 p-1" style='min-width:34px;'>&#x1F50E;</button>
-                    </form>
-                    <div class='col-10 row g-0 my-3'>
-                        {% if categories.findAll()|length < 10 %}
-                            <p class='col-12 g-0 m-0'>Categories</p>
-                            <a class='col-10 g-0 ms-3 text-dark text-decoration-none' href={{'/article' ~ '?lieu=' ~ lieu ~ '&distance=' ~ distance ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><p class='m-0'>Toutes les catégories</p></a>
-                            {% for laCategorie in categories.findBy([],{'id': 'ASC'}) %}
-                                <a class='col-10 g-0 ms-3 text-dark text-decoration-none' href={{'/article' ~ '?lieu=' ~ lieu ~ '&categorie=' ~ laCategorie.getId() ~ '&distance=' ~ (distance|url_encode()) ~ '&apres=' ~ apres ~ '&avant=' ~ avant~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><p class='m-0'>{{ laCategorie.getNom() }}</p></a>
+                        <ul class='dropdown-menu dropdown-menu-middle w-auto' aria-labelledby="mesCategories">
+                            <li><a class='dropdown-item text-decoration-none text-center' href={{'/article' ~ '?categorie=all&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>Toutes les catégories</a></li>
+                            {% for maCategorie in categories.findBy([],{'id': 'ASC'}) %}
+                                <li><a class='dropdown-item text-decoration-none text-center' href={{'/article' ~ '?categorie=' ~ maCategorie.getId() ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>{{ maCategorie.getNom() }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    {% endif %}
+                </div>
+                <div class='col-10 col-sm-5 col-md-10 row g-0 my-3 justify-content-center'>
+                    <div class='col-10 g-0'>
+                        <h5>Garantie</h5>
+                    </div>
+                    <div class='col-10 row g-0' href={{'/article' ~ '?garantie=all&apres=' ~ apres ~ '&avant=' ~ avant~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
+                        <div class='col-10 d-flex g-0' href={{'/article' ~ '?garantie=oui&apres=' ~ apres ~ '&avant=' ~ avant~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
+                            {% if garantie is same as('oui') %}
+                                <input class='me-2' type='checkbox' id='garantie' checked>
+                            {% else %}
+                                <input class='me-2' type='checkbox' id='garantie'>
+                            {% endif %}
+                            <label for='garantie'>En cours</label>
+                        </div>
+                        <div class='col-10 d-flex g-0' href={{'/article' ~ '?garantie=non&apres=' ~ apres ~ '&avant=' ~ avant~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
+                            {% if garantie is same as('non') %}
+                                <input class='me-2' type='checkbox' id='nonGarantie' checked>
+                            {% else %}
+                                <input class='me-2' type='checkbox' id='nonGarantie'>
+                            {% endif %}
+                            <label for='nonGarantie'>Terminée</label>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-10 col-sm-5 col-md-10 row g-0 my-3 justify-content-center'>
+                    <div class='col-10 g-0'>
+                        <h5>Achat</h5>
+                    </div>
+                    <div class='col-10 row g-0' href={{'/article' ~ '?distance=all&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
+                        <div class='col-10 d-flex g-0' href={{'/article' ~ '?distance=' ~ ('a distance'|url_encode())~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
+                            {% if distance is same as('a distance') %}
+                                <input class='me-2' type='checkbox' id='distance' checked>
+                            {% else %}
+                                <input class='me-2' type='checkbox' id='distance'>
+                            {% endif %}
+                            <label for='distance'>A distance</label>
+                        </div>
+                        <div class='col-10 d-flex g-0' href={{'/article' ~ '?distance=' ~ ('sur place'|url_encode())~ '&apres=' ~ apres ~ '&avant=' ~ avant~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
+                            {% if distance is same as('sur place') %}
+                                <input class='me-2' type='checkbox' id='surPlace' checked>
+                            {% else %}
+                                <input class='me-2' type='checkbox' id='surPlace'>
+                            {% endif %}
+                            <label for='surPlace'>Sur place</label>
+                        </div>
+                    </div>
+                </div>
+                <div class='col-10 row g-0 my-3'>
+                    {% if distance is same as('') %}
+                        {% if lieuxachats.findAll()|length < 10 %}
+                            <p class='col-12 g-0 m-0'>Lieu d'achat</p>
+                            <a class='col-10 g-0 ms-3 text-dark text-decoration-none' href={{'/article' ~ '?lieu=all' ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>Tous les lieux d'achats</a>
+                            {% for lieuachat in lieuxachats.findBy([],{'id': 'ASC'}) %}
+                                <a class='col-10 g-0 ms-3 text-dark text-decoration-none' href={{'/article' ~ '?lieu=' ~ lieuachat.getId() ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><p class='m-0'>{{ lieuachat.getNom() }}</p></a>
                             {% endfor %}
                         {% else %}
-                            {% if categorie is same as('') %}
-                                <button class='btn btn-info dropdown-toggle col-12' type='button' id="mesCategories" data-bs-toggle='dropdown' aria-expanded="false">Categorie</button>
+                            {% if lieu is same as('') %}
+                                <button class='btn btn-info dropdown-toggle col-12' type='button' id="mesLieuxAchats" data-bs-toggle='dropdown' aria-expanded="false">Lieu d'achat</button>
                             {% else %}
-                                <button class='btn btn-info dropdown-toggle col-12' type='button' id="mesCategories" data-bs-toggle='dropdown' aria-expanded="false">{{ categories.find(categorie).getNom() }}</button>
+                                <button class='btn btn-info dropdown-toggle col-12' type='button' id="mesLieuxAchats" data-bs-toggle='dropdown' aria-expanded="false">{{ lieuxachats.find(lieu).getNom()}}</button>
                             {% endif %}
-                            <ul class='dropdown-menu dropdown-menu-middle w-auto' aria-labelledby="mesCategories">
-                                <li><a class='dropdown-item text-decoration-none text-center' href={{'/article' ~ '?lieu=' ~ lieu ~ '&distance=' ~ distance ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>Toutes les catégories</a></li>
-                                {% for maCategorie in categories.findBy([],{'id': 'ASC'}) %}
-                                    <li><a class='dropdown-item text-decoration-none text-center' href={{'/article' ~ '?lieu=' ~ lieu ~ '&categorie=' ~ maCategorie.getId() ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>{{ maCategorie.getNom() }}</a></li>
+                            <ul class='dropdown-menu dropdown-menu-middle w-auto' aria-labelledby="mesLieuxAchats">
+                                <li><a class='dropdown-item text-decoration-none text-center' href={{'/article' ~ '?lieu=all' ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>Tous les lieux d'achats</a></li>
+                                {% for monLieuAchat in lieuxachats.findBy([],{'id': 'ASC'}) %}
+                                    <li><a class='dropdown-item text-decoration-none text-center' href={{'/article' ~ '?lieu=' ~ monLieuAchat.getId() ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>{{ monLieuAchat.getNom() }}</a></li>
                                 {% endfor %}
                             </ul>
                         {% endif %}
-                    </div>
-                    <div class='col-10 col-sm-5 col-md-10 row g-0 my-3 justify-content-center'>
-                        <div class='col-10 g-0'>
-                            <h5>Garantie</h5>
-                        </div>
-                        <div class='col-10 row g-0' href={{'/article' ~ '?categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&apres=' ~ apres ~ '&avant=' ~ avant~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
-                            <div class='col-10 d-flex g-0' href={{'/article' ~ '?categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=oui' ~ '&apres=' ~ apres ~ '&avant=' ~ avant~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
-                                {% if garantie is same as('oui') %}
-                                    <input class='me-2' type='checkbox' id='garantie' checked>
-                                {% else %}
-                                    <input class='me-2' type='checkbox' id='garantie'>
-                                {% endif %}
-                                <label for='garantie'>En cours</label>
-                            </div>
-                            <div class='col-10 d-flex g-0' href={{'/article' ~ '?categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode())  ~ '&garantie=non' ~ '&apres=' ~ apres ~ '&avant=' ~ avant~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
-                                {% if garantie is same as('non') %}
-                                    <input class='me-2' type='checkbox' id='nonGarantie' checked>
-                                {% else %}
-                                    <input class='me-2' type='checkbox' id='nonGarantie'>
-                                {% endif %}
-                                <label for='nonGarantie'>Terminée</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='col-10 col-sm-5 col-md-10 row g-0 my-3 justify-content-center'>
-                        <div class='col-10 g-0'>
-                            <h5>Achat</h5>
-                        </div>
-                        <div class='col-10 row g-0' href={{'/article' ~ '?categorie=' ~ categorie~ '&garantie=' ~ garantie  ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
-                            <div class='col-10 d-flex g-0' href={{'/article' ~ '?categorie=' ~ categorie ~ '&distance=' ~ ('a distance'|url_encode())~ '&garantie=' ~ garantie  ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
-                                {% if distance is same as('a distance') %}
-                                    <input class='me-2' type='checkbox' id='distance' checked>
-                                {% else %}
-                                    <input class='me-2' type='checkbox' id='distance'>
-                                {% endif %}
-                                <label for='distance'>A distance</label>
-                            </div>
-                            <div class='col-10 d-flex g-0' href={{'/article' ~ '?categorie=' ~ categorie ~ '&distance=' ~ ('sur place'|url_encode())~ '&garantie=' ~ garantie  ~ '&apres=' ~ apres ~ '&avant=' ~ avant~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
-                                {% if distance is same as('sur place') %}
-                                    <input class='me-2' type='checkbox' id='surPlace' checked>
-                                {% else %}
-                                    <input class='me-2' type='checkbox' id='surPlace'>
-                                {% endif %}
-                                <label for='surPlace'>Sur place</label>
-                            </div>
-                        </div>
-                    </div>
-                    <div class='col-10 row g-0 my-3'>
-                        {% if distance is same as('') %}
-                            {% if lieuxachats.findAll()|length < 10 %}
-                                <p class='col-12 g-0 m-0'>Lieu d'achat</p>
-                                {% for lieuachat in lieuxachats.findBy([],{'id': 'ASC'}) %}
-                                    <a class='col-10 g-0 ms-3 text-dark text-decoration-none' href={{'/article' ~ '?categorie=' ~ categorie ~ '&lieu=' ~ lieuachat.getId() ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><p class='m-0'>{{ lieuachat.getNom() }}</p></a>
-                                {% endfor %}
-                            {% else %}
-                                {% if lieu is same as('') %}
-                                    <button class='btn btn-info dropdown-toggle col-12' type='button' id="mesLieuxAchats" data-bs-toggle='dropdown' aria-expanded="false">Lieu d'achat</button>
-                                {% else %}
-                                    <button class='btn btn-info dropdown-toggle col-12' type='button' id="mesLieuxAchats" data-bs-toggle='dropdown' aria-expanded="false">{{ lieuxachats.find(lieu).getNom()}}</button>
-                                {% endif %}
-                                <ul class='dropdown-menu dropdown-menu-middle w-auto' aria-labelledby="mesLieuxAchats">
-                                    <li><a class='dropdown-item text-decoration-none text-center' href={{'/article' ~ '?categorie=' ~ categorie ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>Tous les lieux d'achats</a></li>
-                                    {% for monLieuAchat in lieuxachats.findBy([],{'id': 'ASC'}) %}
-                                        <li><a class='dropdown-item text-decoration-none text-center' href={{'/article' ~ '?categorie=' ~ categorie ~ '&lieu=' ~ monLieuAchat.getId() ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>{{ monLieuAchat.getNom() }}</a></li>
-                                    {% endfor %}
-                                </ul>
-                            {% endif %}
+                    {% else %}
+                        {% if lieuxachats.findBy({'type': distance})|length < 10 %}
+                            <p class='col-12 g-0 m-0'>Lieu d'achat</p>
+                            <a class='col-10 g-0 ms-3 text-dark text-decoration-none' href={{'/article' ~ '?lieu=all' ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>Tous les lieux d'achats</a>
+                            {% for lieuachat in lieuxachats.findBy([],{'id': 'ASC'}) %}
+                                <a class='col-10 g-0 ms-3 text-dark text-decoration-none' href={{'/article' ~ '?lieu=' ~ lieuachat.getId() ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><p class='m-0'>{{ lieuachat.getNom() }}</p></a>
+                            {% endfor %}
                         {% else %}
-                            {% if lieuxachats.findBy({'type': distance})|length < 10 %}
-                                <p class='col-12 g-0 m-0'>Lieu d'achat</p>
-                                {% for lieuachat in lieuxachats.findBy([],{'id': 'ASC'}) %}
-                                    <a class='col-10 g-0 ms-3 text-dark text-decoration-none' href={{'/article' ~ '?categorie=' ~ categorie ~ '&lieu=' ~ lieuachat.getId() ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><p class='m-0'>{{ lieuachat.getNom() }}</p></a>
-                                {% endfor %}
+                            {% if lieu is same as('') %}
+                                <button class='btn btn-info dropdown-toggle col-12' type='button' id="mesLieuxAchats" data-bs-toggle='dropdown' aria-expanded="false">Lieu d'achat</button>
                             {% else %}
-                                {% if lieu is same as('') %}
-                                    <button class='btn btn-info dropdown-toggle col-12' type='button' id="mesLieuxAchats" data-bs-toggle='dropdown' aria-expanded="false">Lieu d'achat</button>
-                                {% else %}
-                                    <button class='btn btn-info dropdown-toggle col-12' type='button' id="mesLieuxAchats" data-bs-toggle='dropdown' aria-expanded="false">{{ lieuxachats.find(lieu).getNom()}}</button>
-                                {% endif %}
-                                <ul class='dropdown-menu dropdown-menu-middle w-auto' aria-labelledby="mesLieuxAchats">
-                                    <li><a class='dropdown-item text-decoration-none text-center' href={{'/article' ~ '?categorie=' ~ categorie ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>Tous les lieux d'achats</a></li>
-                                    {% for monLieuAchat in lieuxachats.findBy({'type': distance}, {'id': 'ASC'}) %}
-                                        <li><a class='dropdown-item text-decoration-none text-center' href={{'/article' ~ '?categorie=' ~ categorie ~ '&lieu=' ~ monLieuAchat.getId() ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>{{ monLieuAchat.getNom() }}</a></li>
-                                    {% endfor %}
-                                </ul>
+                                <button class='btn btn-info dropdown-toggle col-12' type='button' id="mesLieuxAchats" data-bs-toggle='dropdown' aria-expanded="false">{{ lieuxachats.find(lieu).getNom()}}</button>
                             {% endif %}
+                            <ul class='dropdown-menu dropdown-menu-middle w-auto' aria-labelledby="mesLieuxAchats">
+                                <li><a class='dropdown-item text-decoration-none text-center' href={{'/article' ~ '?lieu=all' ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>Tous les lieux d'achats</a></li>
+                                {% for monLieuAchat in lieuxachats.findBy({'type': distance}, {'id': 'ASC'}) %}
+                                    <li><a class='dropdown-item text-decoration-none text-center' href={{'/article' ~ '?lieu=' ~ monLieuAchat.getId() ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>{{ monLieuAchat.getNom() }}</a></li>
+                                {% endfor %}
+                            </ul>
                         {% endif %}
-                    </div>
-                    <div class='col-10 col-sm-5 col-md-10 row g-0 my-3 justify-content-center'>
-                        <div class='col-10 g-0'>
-                            <h5>Acheté</h5>
-                        </div>
-                        <form class='col-10 row g-0 justify-content-center' method='get'>
-                            <div class='col-10 d-flex flex-column g-0'>
-                                <label for='distance'>après le</label>
-                                {% if apres is same as('') %}
-                                    <input class='me-2' type='date' id='apres' name='apres'>
-                                {% else %}
-                                    <input class='me-2' type='date' id='apres' name='apres' value={{ apres }}>
-                                {% endif %}
-                            </div>
-                            <div class='col-10 d-flex flex-column g-0'>
-                                <label for='avant'>avant le</label>
-                                {% if avant is same as('') %}
-                                    <input class='me-2' type='date' name='avant' id='avant'>
-                                {% else %}
-                                    <input class='me-2' type='date' name='avant' id='avant' value={{ avant }}>
-                                {% endif %}
-                            </div>
-                            <input type='hidden' name='categorie' value={{ categorie }}>
-                            <input type='hidden' name='garantie' value={{ garantie }}>
-                            <input type='hidden' name='sup' value={{ sup }}>
-                            <input type='hidden' name='inf' value={{ inf }}>
-                            {% if distance is same as('a distance') %}
-                                <input type='hidden' name='distance' value='a distance'>
-                            {% elseif distance is same as('sur place') %}
-                                <input type='hidden' name='distance' value='sur place'>
-                            {% endif %}
-                            <button type='submit' class='btn btn-primary g-0 my-3'>rechercher</button>
-                        </form>
-                    </div>
-                    <div class='col-10 col-sm-5 col-md-10 row g-0 my-3 justify-content-center'>
-                        <div class='col-10 g-0'>
-                            <h5>Prix</h5>
-                        </div>
-                        <form class='col-10 row g-0 justify-content-center' method='get'>
-                            <div class='col-10 d-flex flex-column g-0'>
-                                <label for='sup'>supérieur à</label>
-                                {% if sup is same as('') %}
-                                    <input class='me-2' type='number' id='sup' name='sup'>
-                                {% else %}
-                                    <input class='me-2' type='number' id='sup' name='sup' value={{ sup }}>
-                                {% endif %}
-                            </div>
-                            <div class='col-10 d-flex flex-column g-0'>
-                                <label for='avant'>inférieur à</label>
-                                {% if inf is same as('') %}
-                                    <input class='me-2' type='inf' name='inf' id='inf'>
-                                {% else %}
-                                    <input class='me-2' type='inf' name='inf' id='inf' value={{ inf }}>
-                                {% endif %}
-                            </div>
-                            <input type='hidden' name='categorie' value={{ categorie }}>
-                            <input type='hidden' name='garantie' value={{ garantie }}>
-                            <input type='hidden' name='lieu' value={{ lieu }}>
-                            <input type='hidden' name='apres' value={{ apres }}>
-                            <input type='hidden' name='avant' value={{ avant }}>
-                            {% if distance is same as('a distance') %}
-                                <input type='hidden' name='distance' value='a distance'>
-                            {% elseif distance is same as('sur place') %}
-                                <input type='hidden' name='distance' value='sur place'>
-                            {% endif %}
-                            <button type='submit' class='btn btn-primary g-0 my-3'>rechercher</button>
-                        </form>
-                    </div>
+                    {% endif %}
                 </div>
-                <div class='row col-12 col-md-9 g-0 align-content-start justify-content-center'>
-        {% endif %}
+                <div class='col-10 col-sm-5 col-md-10 row g-0 my-3 justify-content-center'>
+                    <div class='col-10 g-0'>
+                        <h5>Acheté</h5>
+                    </div>
+                    <form class='col-10 row g-0 justify-content-center' method='get'>
+                        <div class='col-10 d-flex flex-column g-0'>
+                            <label for='apres'>après le</label>
+                            {% if apres is same as('') %}
+                                <input class='me-2' type='date' id='apres' name='apres'>
+                            {% else %}
+                                <input class='me-2' type='date' id='apres' name='apres' value={{ apres }}>
+                            {% endif %}
+                        </div>
+                        <div class='col-10 d-flex flex-column g-0'>
+                            <label for='avant'>avant le</label>
+                            {% if avant is same as('') %}
+                                <input class='me-2' type='date' name='avant' id='avant'>
+                            {% else %}
+                                <input class='me-2' type='date' name='avant' id='avant' value={{ avant }}>
+                            {% endif %}
+                        </div>
+                        <input type='hidden' name='sup' value={{ sup }}>
+                        <input type='hidden' name='inf' value={{ inf }}>
+                        <button type='submit' class='btn btn-primary g-0 my-3'>rechercher</button>
+                    </form>
+                </div>
+                <div class='col-10 col-sm-5 col-md-10 row g-0 my-3 justify-content-center'>
+                    <div class='col-10 g-0'>
+                        <h5>Prix</h5>
+                    </div>
+                    <form class='col-10 row g-0 justify-content-center' method='get'>
+                        <div class='col-10 d-flex flex-column g-0'>
+                            <label for='sup'>supérieur à</label>
+                            {% if sup is same as('') %}
+                                <input class='me-2' type='number' id='sup' name='sup'>
+                            {% else %}
+                                <input class='me-2' type='number' id='sup' name='sup' value={{ sup }}>
+                            {% endif %}
+                        </div>
+                        <div class='col-10 d-flex flex-column g-0'>
+                            <label for='inf'>inférieur à</label>
+                            {% if inf is same as('') %}
+                                <input class='me-2' type='inf' name='inf' id='inf'>
+                            {% else %}
+                                <input class='me-2' type='inf' name='inf' id='inf' value={{ inf }}>
+                            {% endif %}
+                        </div>
+                        <input type='hidden' name='apres' value={{ apres }}>
+                        <input type='hidden' name='avant' value={{ avant }}>
+                        <button type='submit' class='btn btn-primary g-0 my-3'>rechercher</button>
+                    </form>
+                </div>
+            </div>
+            <div class='row col-12 col-md-9 g-0 align-content-start justify-content-center'>
                 <div class='row col-12 g-0 col bg-primary justify-content-around bg-opacity-50 text-center border rounded align-self-start'>
                     <div class='dropdown d-flex justify-content-center flex-wrap align-items-center col-md-6 m-2'>
                         <p class='my-0 me-3'>Nombre d'article par page</p>
                         <button class='btn btn-info dropdown-toggle' type='button' id="nbArticles" data-bs-toggle='dropdown' aria-expanded="false">{{ max_product }}</button>
                         <ul class='dropdown-menu' aria-labelledby="nbArticles">
-                            <li><a class='dropdown-item text-decoration-none' href={{'/article' ~ '?&max=25' ~ '&categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>25</a></li>
-                            <li><a class='dropdown-item text-decoration-none' href={{'/article' ~ '?&max=50' ~ '&categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>50</a></li>
-                            <li><a class='dropdown-item text-decoration-none' href={{'/article' ~ '?&max=75' ~ '&categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>75</a></li>
-                            <li><a class='dropdown-item text-decoration-none' href={{'/article' ~ '?&max=100' ~ '&categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>100</a></li>
+                            <li><a class='dropdown-item text-decoration-none' href={{'/article' ~ '?&max=25' ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>25</a></li>
+                            <li><a class='dropdown-item text-decoration-none' href={{'/article' ~ '?&max=50' ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>50</a></li>
+                            <li><a class='dropdown-item text-decoration-none' href={{'/article' ~ '?&max=75' ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>75</a></li>
+                            <li><a class='dropdown-item text-decoration-none' href={{'/article' ~ '?&max=100' ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>100</a></li>
                         </ul>
                     </div>
-                    <a class='row col-sm-4 col-md-3 col-lg-2 justify-content-center text-decoration-none m-2' href={{'/' ~ type ~ '/add'}}>
+                    <a class='row col-sm-4 col-md-3 col-lg-2 justify-content-center text-decoration-none m-2' href={{'/article/add'}}>
                         <button type='button' class='btn btn-danger'>ajouter</button>
                     </a>
                 </div>
@@ -222,7 +207,7 @@
                     <div class='row col-12 border rounded g-0'>
                         {% set color = 1 %}
                         <div class='row col-12 g-0 col bg-primary justify-content-around bg-opacity-50 text-center'>
-                            <a class='text-decoration-none col-2 col-md-1 mx-auto my-2 text-dark' href={{'/article' ~ '?tri=id' ~ '&categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
+                            <a class='text-decoration-none col-2 col-md-1 mx-auto my-2 text-dark' href={{'/article' ~ '?tri=id' ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
                             {% if tri is same as('id') %}
                                 {% if sens is same as('ASC') %}
                                     <p class='m-0'>Id&nbsp;&#x25BC;</p>
@@ -233,7 +218,7 @@
                                 <p class='m-0'>Id</p>
                             {% endif %}
                             </a>
-                            <a class='text-decoration-none col-sm-3 mx-auto my-2 text-dark' href={{'/article' ~ '?tri=nom' ~ '&categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
+                            <a class='text-decoration-none col-sm-3 mx-auto my-2 text-dark' href={{'/article' ~ '?tri=nom' ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
                             {% if tri is same as('nom') %}
                                 {% if sens is same as('ASC') %}
                                     <p class='m-0'>Nom&nbsp;&#x25BC;</p>
@@ -244,7 +229,7 @@
                                 <p class='m-0'>Nom</p>
                             {% endif %}
                             </a>
-                            <a class='text-decoration-none col-sm-3 mx-auto my-2 text-dark' href={{'/article' ~ '?tri=date_achat' ~ '&categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
+                            <a class='text-decoration-none col-sm-3 mx-auto my-2 text-dark' href={{'/article' ~ '?tri=date_achat' ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>
                             {% if tri is same as('date_achat') %}
                                 {% if sens is same as('ASC') %}
                                     <p class='m-0'>Date d'achat&nbsp;&#x25BC;</p>
@@ -274,11 +259,7 @@
                                     <p class=' col-sm-3 m-auto'>{{article.getType()}}</p>
                                 {% endif %}
                                 <div class='row col-md-5 g-0'>
-                                    {% if type is same as('categorie') %}
-                                        <a class='col text-decoration-none m-sm-2' href={{'/article/' ~ article.getId()}}><button type='button' class='btn btn-primary mx-1'>Modifier</button></a>
-                                    {% else %}
-                                        <a class='col text-decoration-none m-sm-2' href={{'/article/' ~ article.getId()}}><button type='button' class='btn btn-primary mx-1'>Plus d'infos</button></a>
-                                    {% endif %}
+                                    <a class='col text-decoration-none m-sm-2' href={{'/article/' ~ article.getId()}}><button type='button' class='btn btn-primary mx-1'>Plus d'infos</button></a>
                                     <a class='col text-decoration-none m-sm-2' href={{'/article/delete/' ~ article.getId()}}><button type='button' class='btn btn-danger mx-1'>Supprimer</button></a>
                                 </div>
                             </div>
@@ -286,28 +267,26 @@
                     </div>
                     <div class='row col-12 justify-content-center my-3'>
                         {% if not page is same as('1') %}
-                            <a class='col col-md-2 d-flex justify-content-center text-decoration-none' href={{'/article' ~ '?page=' ~ (page - 1) ~ '&categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><button type='button' class='btn btn-primary'>Previous</button></a>
-                            <a class='col col-sm-1 d-flex justify-content-center text-decoration-none' href={{'/article' ~ '?page=1' ~ '&categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><div class='p-2'>1</div></a>
+                            <a class='col col-md-2 d-flex justify-content-center text-decoration-none' href={{'/article' ~ '?page=' ~ (page - 1) ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><button type='button' class='btn btn-primary'>Previous</button></a>
+                            <a class='col col-sm-1 d-flex justify-content-center text-decoration-none' href={{'/article' ~ '?page=1' ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><div class='p-2'>1</div></a>
                             <div class='col col-sm-1 d-flex justify-content-center text-decoration-none'>...</div>
                         {% endif %}
                         <div class='dropdown d-flex justify-content-center col-sm-1 col'>
                             <button class='btn btn-info dropdown-toggle' type='button' id="dropdownMenuButton1" data-bs-toggle='dropdown' aria-expanded="false">{{page}}</button>
                             <ul class='dropdown-menu' aria-labelledby="dropdownMenuButton1">
                             {% for p in 1..nbPageMax %}
-                                <li><a class='dropdown-item text-decoration-none' href={{'/article' ~ '?page=' ~ p ~ '&categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>{{ p }}</a></li>
+                                <li><a class='dropdown-item text-decoration-none' href={{'/article' ~ '?page=' ~ p ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}>{{ p }}</a></li>
                             {% endfor %}
                             </ul>
                         </div>
                         {% if not page is same as(nbPageMax) %}
                             <div class='col col-sm-1 d-flex justify-content-center'>...</div>
-                            <a class='col col-sm-1 d-flex justify-content-center text-decoration-none' href={{'/article' ~ '?page=' ~ nbPageMax ~ '&categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><div class='p-2'>{{ nbPageMax }}</div></a>
-                            <a class='col col-md-2 d-flex justify-content-center text-decoration-none' href={{'/article' ~ '?page=' ~ (page + 1) ~ '&categorie=' ~ categorie ~ '&lieu=' ~ lieu ~ '&distance=' ~ (distance|url_encode()) ~ '&garantie=' ~ garantie ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><button type='button' class='btn btn-primary'>Next</button></a>
+                            <a class='col col-sm-1 d-flex justify-content-center text-decoration-none' href={{'/article' ~ '?page=' ~ nbPageMax ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><div class='p-2'>{{ nbPageMax }}</div></a>
+                            <a class='col col-md-2 d-flex justify-content-center text-decoration-none' href={{'/article' ~ '?page=' ~ (page + 1) ~ '&apres=' ~ apres ~ '&avant=' ~ avant ~ '&sup=' ~ sup ~ '&inf=' ~ inf }}><button type='button' class='btn btn-primary'>Next</button></a>
                         {% endif %}
                     </div>
                 {% endif %}
-                {% if type is same as('article') %}
             </div>
         </div>
-        {% endif %}
     <div>
 {% endblock %}

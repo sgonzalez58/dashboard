@@ -124,32 +124,81 @@ class ArticleController extends AbstractController
             $session->remove('page');
         }
 
-        if(!isset($categorie) || $categorie == ''){
-            $categorie = '';
-        }else{
-            $conditions = array_merge($conditions, array_fill_keys(['categorie'], $categorie));
-        }
-
-        if(!isset($lieu) || $lieu == ''){
-            $lieu = '';
-            if(!isset($distance) || $distance == ''){
-                $distance = '';
+        if(isset($categorie)){
+            if($categorie != 'all'){
+                if(!($categories->find($categorie))){
+                    return new Response('<html><body>Cette catégorie n\'existe pas!</body></html>');
+                }else{
+                    $session->set('categorie', $categorie);
+                }
             }else{
-                $mesLieux = $lieux->findBy(['type' => $distance]);
-                $conditions = array_merge($conditions, array_fill_keys(['lieu_achat'], $mesLieux));
+                $session->remove('categorie');
             }
-        }else{
-            $conditions = array_merge($conditions, array_fill_keys(['lieu_achat'], $lieu));
-            if(!isset($distance) || $distance == ''){
-                $distance = '';
+            $session->remove('page');
+        }
+        
+        if($session->has('categorie')){
+            $conditions = array_merge($conditions, array_fill_keys(['categorie'], $session->get('categorie')));
+        }
+
+        if(isset($distance)){
+            if($distance != 'a distance' && $distance != 'sur place' && $distance != 'all'){
+                return new Response('<html><body>Veuillez entrer une valeur valide!</body></html>');
+            }else{
+                if($distance == 'all'){
+                    $session->remove('distance');
+                }else{
+                    $session->set('distance', $distance);
+                    $session->remove('lieuAchat');
+                }  
+            }
+            $session->remove('page');
+        }
+
+        if(isset($lieu)){
+            if($lieu != 'all'){
+                if(!($lieux->find($lieu))){
+                    return new Response('<html><body>Ce lieu d\'achat n\'existe pas!</body></html>');
+                }else{
+                    if($session->has('distance')){
+                        if($lieux->find($lieu)->getType() != $session->get('distance')){
+                            $session->remove('distance');
+                        }
+                    }
+                    $session->set('lieuAchat', $lieu);
+                }
+            }else{
+                $session->remove('lieuAchat');
+            }
+            $session->remove('page');
+        }
+
+        if($session->has('lieuAchat')){
+            $conditions = array_merge($conditions, array_fill_keys(['lieu_achat'], $session->get('lieuAchat')));
+        }elseif($session->has('distance')){
+            $mesLieux = $lieux->findBy(['type' => $session->get('distance')]);
+            $conditions = array_merge($conditions, array_fill_keys(['lieu_achat'], $mesLieux));
+        }
+
+
+
+        if(isset($garantie)){
+            if($garantie != 'oui' && $garantie != 'non' && $garantie != 'all'){
+                return new Response('<html><body>Veuillez sélectionner une valeure valide!</body></html>');
+            }else{
+                if($garantie == 'all'){
+                    $session->remove('garantie');
+                }else{
+                    $session->set('garantie', $garantie);
+                }
             }
         }
 
-        if(!isset($garantie) || $garantie == ''){
-            $garantie = '';
-        }else{
-            $conditions = array_merge($conditions, array_fill_keys(['date_garantie'], $garantie));
+        if($session->has('garantie')){       
+            $conditions = array_merge($conditions, array_fill_keys(['date_garantie'], $session->get('garantie')));
         }
+
+
         if(!isset($apres) || $apres == ''){
             $apres = '';
             if(!isset($avant) || $avant == ''){
@@ -198,7 +247,7 @@ class ArticleController extends AbstractController
 
         $articles = $repository ->search(
             $session->get('nom', ''),
-            $conditions
+            $conditions,
         );
         
         $maxArticles = count($articles);
@@ -214,19 +263,17 @@ class ArticleController extends AbstractController
             'nbPageMax' =>  (string)$maxPages,
             'page_title' => 'Articles',
             'user' => $this->getUser(),
-            'type' => 'article',
             'max_product' => $session->get('max', '25'),
             'page' => $session->get('page', '1'),
             'tri' => $session->get('tri', 'id'),
             'sens' => $session->get('sens', 'ASC'),
-            'form' => $form,
             'nom' => $session->get('nom'),
             'categories' => $categories,
-            'categorie' => $categorie,
+            'categorie' => $session->get('categorie', ''),
             'lieuxachats' => $lieux,
-            'lieu' => $lieu,
-            'distance' => $distance,
-            'garantie' => $garantie,
+            'lieu' => $session->get('lieuAchat', ''),
+            'distance' => $session->get('distance', ''),
+            'garantie' => $session->get('garantie', ''),
             'apres' => $apres,
             'avant' => $avant,
             'sup' => $sup,
