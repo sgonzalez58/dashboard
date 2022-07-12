@@ -4,6 +4,7 @@
 {% block javascripts %}
     {{ parent() }}
     {{ encore_entry_script_tags('filtering') }}
+    {{ encore_entry_script_tags('getProducts') }}
 {% endblock %}
 
 {% block body %}
@@ -16,7 +17,7 @@
         </div>
         <div class='row col-12 g-0 justify-content-center'>
             <div class='row col-12 col-md-3 g-0 bg-info bg-opacity-25 border rounded justify-content-center align-self-start'>
-                <form class='col-8 col-md-10 row g-0 justify-content-center my-3' action={{ '/article' }}>
+                <form class='col-8 col-md-10 row g-0 justify-content-center my-3' onsubmit="return recupererArticles(); ">
                     {% if nom is same as('') %}
                         <input class='col-10 col-sm-8 col-lg-9 col-lg-4 g-0' type="text" id="search" name="search" placeholder='recherche'>
                     {% else %}
@@ -238,28 +239,25 @@
                             </a>
                             <div class='row col-md-5 g-0'></div>
                         </div>
-                        {% for article in articles %}
-                            {% if color %}
-                                {% set color = 0 %}
-                                <div class='row col-12 g-0 col bg-info justify-content-around bg-opacity-50 text-center'>
-                            {% else %}
-                                {% set color = 1 %}
-                                <div class='row col-12 g-0 col bg-light justify-content-around text-center'>
-                            {% endif %}
-                                <p class='col-2 col-md-1 m-auto'> {{ article.getId() }}</p>
-                                <p class='col-sm-3 m-auto' my-2>{{article.getNom()}}</p>
-                                {% if article.getDateAchat() is defined %}
+                        <div class="row col-12 g-0 js-articles-table">
+                            {% for article in articles %}
+                                {% if color %}
+                                    {% set color = 0 %}
+                                    <div class='row col-12 g-0 col bg-info justify-content-around bg-opacity-50 text-center'>
+                                {% else %}
+                                    {% set color = 1 %}
+                                    <div class='row col-12 g-0 col bg-light justify-content-around text-center'>
+                                {% endif %}
+                                    <p class='col-2 col-md-1 m-auto'> {{ article.getId() }}</p>
+                                    <p class='col-sm-3 m-auto' my-2>{{article.getNom()}}</p>
                                     <p class=' col-sm-3 m-auto'>{{article.getDateAchat()|date('Y-m-d')}}</p>
-                                {% endif %}
-                                {% if article.getType() is defined %}
-                                    <p class=' col-sm-3 m-auto'>{{article.getType()}}</p>
-                                {% endif %}
-                                <div class='row col-md-5 g-0'>
-                                    <a class='col text-decoration-none m-sm-2' href={{'/article/' ~ article.getId()}}><button type='button' class='btn btn-primary mx-1'>Plus d'infos</button></a>
-                                    <a class='col text-decoration-none m-sm-2' href={{'/article/delete/' ~ article.getId()}}><button type='button' class='btn btn-danger mx-1'>Supprimer</button></a>
+                                    <div class='row col-md-5 g-0'>
+                                        <a class='col text-decoration-none m-sm-2' href={{'/article/' ~ article.getId()}}><button type='button' class='btn btn-primary mx-1'>Plus d'infos</button></a>
+                                        <a class='col text-decoration-none m-sm-2' href={{'/article/delete/' ~ article.getId()}}><button type='button' class='btn btn-danger mx-1'>Supprimer</button></a>
+                                    </div>
                                 </div>
-                            </div>
-                        {% endfor %}
+                            {% endfor %}
+                        </div>
                     </div>
                     <div class='row col-12 justify-content-center my-3'>
                         {% if not page is same as('1') %}
