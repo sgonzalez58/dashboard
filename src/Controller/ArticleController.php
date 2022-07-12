@@ -74,10 +74,6 @@ class ArticleController extends AbstractController
     {
         $repository = $doctrine->getRepository(Article::class);
 
-        $article = new Article();
-        $form = $this->createForm(rechercheType::class, $article);
-        $form->handleRequest($request);
-
         $categories = $doctrine->getRepository(Categorie::class);
 
         $lieux = $doctrine->getRepository(LieuAchat::class);
@@ -85,6 +81,44 @@ class ArticleController extends AbstractController
         $conditions = array();
 
         $session = $this->requestStack->getSession();
+
+        if ($request->isXmlHttpRequest()) {
+            if($request->request->get('search')){
+                if($request->request->get('search') == 'reset'){
+                    $session->remove('nom');
+                }else{
+                    $session->set('nom', $request->request->get('search'));
+                    $session ->remove('page');
+                }
+            }
+
+            $myPage = $repository ->search(
+                $session->get('nom', ''),
+                $conditions,
+                $session->get('tri', 'id'),
+                $session->get('sens', 'ASC'),
+                $session->get('max', 25),
+                $session->get('max', 25) * ($session->get('page', 1) - 1),
+            );
+
+            $articles = $repository ->search(
+                $session->get('nom', ''),
+                $conditions,
+            );
+            
+            $maxArticles = count($articles);
+    
+            $maxPages = ceil($maxArticles / $session->get('max', 25));
+
+
+            $idx=0;
+            while($myPage != []){
+                $temp = array_shift($myPage);
+                $jsonData[$idx++] = ['id' => $temp->getId(), 'nom' => $temp->getNom(), 'date' => $temp->getDateAchat()];
+            };
+
+            return new JsonResponse($jsonData);
+        }
 
         $request = Request::createFromGlobals();
 
@@ -314,240 +348,6 @@ class ArticleController extends AbstractController
             'sup' => $session->get('sup', ''),
             'inf' => $session->get('inf', ''),
         ]);
-    }
-
-
-    #[Route('/article/ajax', name: 'article_reseach')]
-    public function research(Request $request, ManagerRegistry $doctrine): Response
-    {
-        $repository = $doctrine->getRepository(Article::class);
-
-        $article = new Article();
-        $form = $this->createForm(rechercheType::class, $article);
-        $form->handleRequest($request);
-
-        $categories = $doctrine->getRepository(Categorie::class);
-
-        $lieux = $doctrine->getRepository(LieuAchat::class);
-
-        $conditions = array();
-
-        $session = $this->requestStack->getSession();
-
-        $request = Request::createFromGlobals();
-
-        $nom = $request->query->get('search');
-        $apres = $request->query->get('apres');
-        $avant = $request->query->get('avant');
-        $sup = $request->query->get('sup');
-        $inf = $request->query->get('inf');
-        $conditions = $request->query->get('conditions');
-
-        if(isset($max)){
-            $session->set('max', $max);
-            $session->remove('page');
-        }
-
-        if(isset($page)){
-            $session->set('page', $page);
-        }
-
-        if(isset($tri)){
-            if($session->get('tri', 'id') == $tri)
-                if($session->get('sens', 'ASC') == 'ASC'){
-                    $session->set('sens', 'DESC');
-                }else{
-                    $session->set('sens', 'ASC');
-                }
-            else{
-                $session->set('tri', $tri);
-                $session->remove('sens');
-            }
-            $session->remove('page');
-        }
-
-        if(isset($categorie)){
-            if($categorie != 'all'){
-                if(!($categories->find($categorie))){
-                    return new Response('<html><body>Cette catégorie n\'existe pas!</body></html>');
-                }else{
-                    $session->set('categorie', $categorie);
-                }
-            }else{
-                $session->remove('categorie');
-            }
-            $session->remove('page');
-        }
-        
-        if($session->has('categorie')){
-            $conditions = array_merge($conditions, array_fill_keys(['categorie'], $session->get('categorie')));
-        }
-
-        if(isset($distance)){
-            if($distance != 'a distance' && $distance != 'sur place' && $distance != 'all'){
-                return new Response('<html><body>Veuillez entrer une valeur valide!</body></html>');
-            }else{
-                if($distance == 'all'){
-                    $session->remove('distance');
-                }else{
-                    $session->set('distance', $distance);
-                    $session->remove('lieuAchat');
-                }  
-            }
-            $session->remove('page');
-        }
-
-        if(isset($lieu)){
-            if($lieu != 'all'){
-                if(!($lieux->find($lieu))){
-                    return new Response('<html><body>Ce lieu d\'achat n\'existe pas!</body></html>');
-                }else{
-                    if($session->has('distance')){
-                        if($lieux->find($lieu)->getType() != $session->get('distance')){
-                            $session->remove('distance');
-                        }
-                    }
-                    $session->set('lieuAchat', $lieu);
-                }
-            }else{
-                $session->remove('lieuAchat');
-            }
-            $session->remove('page');
-        }
-
-        if($session->has('lieuAchat')){
-            $conditions = array_merge($conditions, array_fill_keys(['lieu_achat'], $session->get('lieuAchat')));
-        }elseif($session->has('distance')){
-            $mesLieux = $lieux->findBy(['type' => $session->get('distance')]);
-            $conditions = array_merge($conditions, array_fill_keys(['lieu_achat'], $mesLieux));
-        }
-
-
-
-        if(isset($garantie)){
-            if($garantie != 'oui' && $garantie != 'non' && $garantie != 'all'){
-                return new Response('<html><body>Veuillez sélectionner une valeure valide!</body></html>');
-            }else{
-                if($garantie == 'all'){
-                    $session->remove('garantie');
-                }else{
-                    $session->set('garantie', $garantie);
-                }
-            }
-            $session->remove('page');
-        }
-
-        if($session->has('garantie')){       
-            $conditions = array_merge($conditions, array_fill_keys(['date_garantie'], $session->get('garantie')));
-        }
-
-
-        if(isset($apres)){
-            if($apres == ''){
-                $session->remove('apres');
-            }else{
-                $session->set('apres', $apres);
-            }
-            $session->remove('page');
-        }
-
-        if(isset($avant)){
-            if($avant == ''){
-                $session->remove('avant');
-            }else{
-                $session->set('avant', $avant);
-            }
-            $session->remove('page');
-        }
-
-
-        if($session->has('apres')){
-            if($session->has('avant')){
-                $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['entre', $session->get('apres'), $session->get('avant')]));
-            }else{
-                $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['apres', $session->get('apres')]));
-            }
-        }else{
-            if($session->has('avant')){
-                $conditions = array_merge($conditions, array_fill_keys(['date_achat'], ['avant', $session->get('avant')]));
-            }
-        }
-
-
-
-        if(isset($sup)){
-            if($sup == ''){
-                $session->remove('sup');
-            }else{
-                $session->set('sup', $sup);
-            }
-            $session->remove('page');
-        }
-
-        if(isset($inf)){
-            if($inf == ''){
-                $session->remove('inf');
-            }else{
-                $session->set('inf', $inf);
-            }
-            $session->remove('page');
-        }
-
-
-        if($session->has('sup')){
-            if($session->has('inf')){
-                $conditions = array_merge($conditions, array_fill_keys(['prix'], ['entre', $session->get('sup'), $session->get('inf')]));
-            }else{
-                $conditions = array_merge($conditions, array_fill_keys(['prix'], ['sup', $session->get('sup')]));
-            }
-        }else{
-            if($session->has('inf')){
-                $conditions = array_merge($conditions, array_fill_keys(['prix'], ['inf', $session->get('inf')]));
-            }
-        }
-
-
-
-        if(isset($nom)){
-            $session->set('nom', $nom);
-            $session->remove('page');
-        }
-
-        $myPage = $repository ->search(
-            $session->get('nom', ''),
-            $conditions,
-            $session->get('tri', 'id'),
-            $session->get('sens', 'ASC'),
-            $session->get('max', 25),
-            $session->get('max', 25) * ($session->get('page', 1) - 1),
-        );
-
-        $articles = $repository ->search(
-            $session->get('nom', ''),
-            $conditions,
-        );
-        
-        $maxArticles = count($articles);
-
-        $maxPages = ceil($maxArticles / $session->get('max', 25));
-
-        $i = 0;
-
-        foreach($myPage as $article){
-            if($i % 2){
-                echo '<div class=\'row col-12 g-0 col bg-info justify-content-around bg-opacity-50 text-center\'>';
-            }else{
-                echo '<div class=\'row col-12 g-0 col bg-light justify-content-around text-center\'>';
-            }
-            $i++;
-            echo '  <p class=\'col-2 col-md-1 m-auto\'>'.$article->getId().'</p>
-                    <p class=\'col-sm-3 m-auto\' my-2>'.$article->getNom().'</p>
-                    <p class=\'col-sm-3 m-auto\'>'.date('Y-m-d', article->getDateAchat()).'</p>
-                    <div class=\'row col-md-5 g-0\'>
-                        <a class=\'col text-decoration-none m-sm-2\' href={{\'/article/\' ~ '.article->getId().'><button type=\'button\' class=\'btn btn-primary mx-1\'>Plus d\'infos</button></a>
-                        <a class=\'col text-decoration-none m-sm-2\' href={{\'/article/delete/\' ~ '.article->getId().'><button type=\'button\' class=\'btn btn-danger mx-1\'>Supprimer</button></a>
-                    </div>';
-        }
     }
 
 

@@ -17,14 +17,14 @@
         </div>
         <div class='row col-12 g-0 justify-content-center'>
             <div class='row col-12 col-md-3 g-0 bg-info bg-opacity-25 border rounded justify-content-center align-self-start'>
-                <form class='col-8 col-md-10 row g-0 justify-content-center my-3' onsubmit="return recupererArticles(); ">
+                <div class='col-8 col-md-10 row g-0 justify-content-center my-3'>
                     {% if nom is same as('') %}
                         <input class='col-10 col-sm-8 col-lg-9 col-lg-4 g-0' type="text" id="search" name="search" placeholder='recherche'>
                     {% else %}
                         <input class='col-10 col-sm-8 col-lg-9 col-lg-4 g-0' type="text" id="search" name="search" placeholder='recherche' value={{ nom }}>
                     {% endif %}
-                    <button type="submit" class="btn btn-secondary col-2 col-md-2 g-0 p-1" style='min-width:34px;'>&#x1F50E;</button>
-                </form>
+                    <button type="button" class="btn btn-secondary col-2 col-md-2 g-0 p-1 search" style='min-width:34px;'>&#x1F50E;</button>
+                </div>
                 <div class='col-10 row g-0 my-3'>
                     {% if categories.findAll()|length < 10 %}
                         <p class='col-12 g-0 m-0'>Categories</p>
@@ -259,7 +259,7 @@
                             {% endfor %}
                         </div>
                     </div>
-                    <div class='row col-12 justify-content-center my-3'>
+                    <div class='row col-12 justify-content-center my-3 mypages'>
                         {% if not page is same as('1') %}
                             <a class='col col-md-2 d-flex justify-content-center text-decoration-none' href={{'/article' ~ '?page=' ~ (page - 1)}}><button type='button' class='btn btn-primary'>Previous</button></a>
                             <a class='col col-sm-1 d-flex justify-content-center text-decoration-none' href={{'/article' ~ '?page=1'}}><div class='p-2'>1</div></a>
